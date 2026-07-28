@@ -48,8 +48,14 @@ JDK 17+ required (Android Studio JBR works).
 ## Stage 1 implementation order
 
 1. ✅ Project structure + Room schema
-2. Rule Engine (JSON rules + matching)
+2. ✅ Rule Engine (JSON rules + matching)
 3. NotificationListenerService
 4. Pipeline: notify → analyze → store → alert
 5. Screens (History, Settings, Manual check)
 6. i18n + capability detection + model fallback
+
+### Rule pack
+
+- Asset: `app/src/main/assets/rules/default_rules_v1.json` (auditable)
+- Engine: `DefaultRuleEngine` — rules first, pure evaluation, sensitivity thresholds
+- Patterns: substring or `regex:...`; match mode `any` / `all`
