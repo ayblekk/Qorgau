@@ -3,37 +3,84 @@
     <string name="app_name">ScamGuardian</string>
     <string name="tagline">Алаяқтардан жергілікті қорғаныс</string>
     <string name="privacy_badge">Тек құрылғыда</string>
+
     <string name="nav_history">Тарих</string>
     <string name="nav_check">Тексеру</string>
     <string name="nav_settings">Баптаулар</string>
+
+    <string name="history_title">Тарих</string>
     <string name="history_empty">Әзірге бәрі таза</string>
     <string name="history_empty_hint">Күдікті хабарламалар осында пайда болады</string>
+    <string name="history_source_sms">SMS</string>
+    <string name="history_source_whatsapp">WhatsApp</string>
+    <string name="history_source_telegram">Telegram</string>
+    <string name="history_source_manual">Қолмен тексеру</string>
+    <string name="history_unknown_sender">Белгісіз жіберуші</string>
+    <string name="history_details_title">Толығырақ</string>
+    <string name="history_message_label">Хабарлама</string>
+    <string name="history_matched_rules">Іске қосылған ережелер</string>
+
     <string name="risk_high">Алаяқтық</string>
     <string name="risk_suspicious">Күдікті</string>
     <string name="risk_safe">Қауіпсіз</string>
+
     <string name="check_title">Мәтінді тексеру</string>
     <string name="check_hint">Күдікті хабарламаны қойыңыз</string>
     <string name="check_action">Тексеру</string>
+    <string name="check_result_title">Нәтиже</string>
+    <string name="check_clear">Тазалау</string>
+    <string name="check_analyzing">Тексерілуде…</string>
+    <string name="check_empty_error">Тексеру үшін мәтін енгізіңіз</string>
+
     <string name="settings_title">Баптаулар</string>
+    <string name="settings_section_protection">Қорғаныс</string>
+    <string name="settings_section_analysis">Талдау</string>
+    <string name="settings_section_data">Деректер</string>
     <string name="settings_language">Тіл</string>
+    <string name="settings_language_ru">Орысша</string>
+    <string name="settings_language_kk">Қазақша</string>
     <string name="settings_sensitivity">Сезімталдық</string>
+    <string name="settings_sensitivity_low">Төмен</string>
+    <string name="settings_sensitivity_medium">Орташа</string>
+    <string name="settings_sensitivity_high">Жоғары</string>
+    <string name="settings_sensitivity_hint">Жоғары — көбірек ескерту, жаңсақ іске қосылу мүмкін</string>
     <string name="settings_rules_only">Тек ережелер</string>
+    <string name="settings_rules_only_hint">Модель қолжетімді болса да қолданбау</string>
     <string name="settings_monitor_sms">SMS</string>
+    <string name="settings_monitor_sms_hint">SMS хабарламаларын талдау</string>
     <string name="settings_monitor_whatsapp">WhatsApp</string>
+    <string name="settings_monitor_whatsapp_hint">WhatsApp хабарламаларын талдау</string>
     <string name="settings_monitor_telegram">Telegram</string>
+    <string name="settings_monitor_telegram_hint">Telegram хабарламаларын талдау</string>
     <string name="settings_model_enabled">Құрылғыдағы модель</string>
+    <string name="settings_model_enabled_hint">Қосымша, тек күмәнді жағдайларда</string>
     <string name="settings_clear_history">Тарихты тазалау</string>
+    <string name="settings_clear_history_confirm">Осы құрылғыдағы барлық талдау жазбаларын жою керек пе?</string>
+    <string name="settings_clear_history_done">Тарих тазартылды</string>
+    <string name="settings_notification_access">Хабарламаларға қол жеткізу</string>
+    <string name="settings_notification_access_hint">SMS, WhatsApp және Telegram-ды жергілікті оқу үшін қажет</string>
+    <string name="settings_notification_access_on">Қосулы</string>
+    <string name="settings_notification_access_off">Өшірулі — баптауларды ашу үшін басыңыз</string>
+    <string name="settings_post_notifications">Хабарлама рұқсаты</string>
+    <string name="settings_post_notifications_hint">Алаяқтық туралы ескертулер көрсету үшін</string>
+    <string name="settings_open_system">Ашу</string>
+
     <string name="action_got_it">Түсінікті</string>
     <string name="action_mark_safe">Қауіпсіз деп белгілеу</string>
     <string name="action_false_positive">Жаңсақ іске қосылу</string>
+    <string name="action_cancel">Болдырмау</string>
+    <string name="action_confirm">Жою</string>
+    <string name="action_close">Жабу</string>
     <string name="why_scam">Неге бұл алаяқтық?</string>
-    <string name="placeholder_scaffold">Stage 1: хабарлама тыңдағышы қосылды. Жүйе баптауларында рұқсат беріңіз.</string>
+
     <string name="notification_listener_label">ScamGuardian — хабарлама қорғанысы</string>
     <string name="alert_channel_name">Алаяқтық туралы ескертулер</string>
     <string name="alert_channel_description">Күдікті хабарламалар туралы жергілікті ескертулер. Деректер құрылғыдан шықпайды.</string>
     <string name="alert_title_high">Ықтимал алаяқтық</string>
     <string name="alert_title_suspicious">Күдікті хабарлама</string>
-    <string name="settings_notification_access">Хабарламаларға қол жеткізу</string>
-    <string name="settings_notification_access_hint">SMS, WhatsApp және Telegram-ды жергілікті оқу үшін қажет</string>
-</resources>
 
+    <string name="time_just_now">жаңа ғана</string>
+    <string name="time_minutes_ago">%d мин бұрын</string>
+    <string name="time_hours_ago">%d сағ бұрын</string>
+    <string name="time_days_ago">%d күн бұрын</string>
+</resources>

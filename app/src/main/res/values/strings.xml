@@ -3,37 +3,84 @@
     <string name="app_name">ScamGuardian</string>
     <string name="tagline">Локальная защита от мошенников</string>
     <string name="privacy_badge">Только на устройстве</string>
+
     <string name="nav_history">История</string>
     <string name="nav_check">Проверка</string>
     <string name="nav_settings">Настройки</string>
+
+    <string name="history_title">История</string>
     <string name="history_empty">Пока всё чисто</string>
     <string name="history_empty_hint">Подозрительные сообщения появятся здесь</string>
+    <string name="history_source_sms">SMS</string>
+    <string name="history_source_whatsapp">WhatsApp</string>
+    <string name="history_source_telegram">Telegram</string>
+    <string name="history_source_manual">Ручная проверка</string>
+    <string name="history_unknown_sender">Неизвестный отправитель</string>
+    <string name="history_details_title">Детали</string>
+    <string name="history_message_label">Сообщение</string>
+    <string name="history_matched_rules">Сработавшие правила</string>
+
     <string name="risk_high">Скам</string>
     <string name="risk_suspicious">Подозрительно</string>
     <string name="risk_safe">Безопасно</string>
+
     <string name="check_title">Проверить текст</string>
     <string name="check_hint">Вставьте подозрительное сообщение</string>
     <string name="check_action">Проверить</string>
+    <string name="check_result_title">Результат</string>
+    <string name="check_clear">Очистить</string>
+    <string name="check_analyzing">Проверяем…</string>
+    <string name="check_empty_error">Введите текст для проверки</string>
+
     <string name="settings_title">Настройки</string>
+    <string name="settings_section_protection">Защита</string>
+    <string name="settings_section_analysis">Анализ</string>
+    <string name="settings_section_data">Данные</string>
     <string name="settings_language">Язык</string>
+    <string name="settings_language_ru">Русский</string>
+    <string name="settings_language_kk">Қазақша</string>
     <string name="settings_sensitivity">Чувствительность</string>
+    <string name="settings_sensitivity_low">Низкая</string>
+    <string name="settings_sensitivity_medium">Средняя</string>
+    <string name="settings_sensitivity_high">Высокая</string>
+    <string name="settings_sensitivity_hint">Выше — больше предупреждений, возможны ложные</string>
     <string name="settings_rules_only">Только правила</string>
+    <string name="settings_rules_only_hint">Не использовать модель, даже если доступна</string>
     <string name="settings_monitor_sms">SMS</string>
+    <string name="settings_monitor_sms_hint">Анализировать уведомления SMS</string>
     <string name="settings_monitor_whatsapp">WhatsApp</string>
+    <string name="settings_monitor_whatsapp_hint">Анализировать уведомления WhatsApp</string>
     <string name="settings_monitor_telegram">Telegram</string>
-    <string name="settings_model_enabled">Онлайн-модель на устройстве</string>
+    <string name="settings_monitor_telegram_hint">Анализировать уведомления Telegram</string>
+    <string name="settings_model_enabled">Модель на устройстве</string>
+    <string name="settings_model_enabled_hint">Опционально, только при неоднозначных случаях</string>
     <string name="settings_clear_history">Очистить историю</string>
+    <string name="settings_clear_history_confirm">Удалить все записи анализа с этого устройства?</string>
+    <string name="settings_clear_history_done">История очищена</string>
+    <string name="settings_notification_access">Доступ к уведомлениям</string>
+    <string name="settings_notification_access_hint">Нужен, чтобы читать SMS, WhatsApp и Telegram локально</string>
+    <string name="settings_notification_access_on">Включён</string>
+    <string name="settings_notification_access_off">Выключен — нажмите, чтобы открыть настройки</string>
+    <string name="settings_post_notifications">Разрешение на уведомления</string>
+    <string name="settings_post_notifications_hint">Чтобы показывать предупреждения о скаме</string>
+    <string name="settings_open_system">Открыть</string>
+
     <string name="action_got_it">Понятно</string>
     <string name="action_mark_safe">Отметить как безопасное</string>
     <string name="action_false_positive">Ложное срабатывание</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_confirm">Удалить</string>
+    <string name="action_close">Закрыть</string>
     <string name="why_scam">Почему это скам?</string>
-    <string name="placeholder_scaffold">Stage 1: слушатель уведомлений подключён. Включите доступ в настройках системы.</string>
+
     <string name="notification_listener_label">ScamGuardian — защита сообщений</string>
     <string name="alert_channel_name">Предупреждения о скаме</string>
     <string name="alert_channel_description">Локальные оповещения о подозрительных сообщениях. Данные не покидают устройство.</string>
     <string name="alert_title_high">Возможный скам</string>
     <string name="alert_title_suspicious">Подозрительное сообщение</string>
-    <string name="settings_notification_access">Доступ к уведомлениям</string>
-    <string name="settings_notification_access_hint">Нужен, чтобы читать SMS, WhatsApp и Telegram локально</string>
-</resources>
 
+    <string name="time_just_now">только что</string>
+    <string name="time_minutes_ago">%d мин назад</string>
+    <string name="time_hours_ago">%d ч назад</string>
+    <string name="time_days_ago">%d дн назад</string>
+</resources>

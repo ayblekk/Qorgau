@@ -5,39 +5,40 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kz.qorgau.scamguardian.ui.AppViewModelFactory
+import kz.qorgau.scamguardian.ui.navigation.ScamGuardianApp
 import kz.qorgau.scamguardian.ui.theme.ScamGuardianTheme
+import kz.qorgau.scamguardian.ui.util.LocaleHelper
 
 /**
- * Entry activity. Full navigation screens land in a later Stage 1 block (DESIGN.md).
+ * Entry activity with bottom navigation (DESIGN.md).
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val container = (application as ScamGuardianApp).container
+
+        lifecycleScope.launch {
+            val language = withContext(Dispatchers.IO) {
+                container.settingsRepository.getSettings().language
+            }
+            LocaleHelper.applyLanguage(language)
+        }
+
         setContent {
             ScamGuardianTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(16.dp),
-                        color = MaterialTheme.colorScheme.background,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.placeholder_scaffold),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                    }
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    ScamGuardianApp(
+                        viewModelFactory = AppViewModelFactory(container),
+                    )
                 }
             }
         }
