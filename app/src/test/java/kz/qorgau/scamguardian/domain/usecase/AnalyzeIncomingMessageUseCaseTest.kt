@@ -2,21 +2,23 @@ package kz.qorgau.scamguardian.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import kz.qorgau.scamguardian.domain.classifier.ClassifierResult
+import kz.qorgau.scamguardian.domain.classifier.ScamClassifier
 import kz.qorgau.scamguardian.domain.model.AnalysisRecord
 import kz.qorgau.scamguardian.domain.model.AppLanguage
 import kz.qorgau.scamguardian.domain.model.AppSettings
 import kz.qorgau.scamguardian.domain.model.IncomingMessage
 import kz.qorgau.scamguardian.domain.model.RiskLevel
+import kz.qorgau.scamguardian.domain.model.Sensitivity
 import kz.qorgau.scamguardian.domain.model.SourceApp
 import kz.qorgau.scamguardian.domain.model.UserFeedback
 import kz.qorgau.scamguardian.domain.repository.AnalysisRepository
 import kz.qorgau.scamguardian.domain.repository.SettingsRepository
 import kz.qorgau.scamguardian.domain.rules.RuleEvaluationResult
 import kz.qorgau.scamguardian.domain.rules.RuleEngine
-import kz.qorgau.scamguardian.domain.model.Sensitivity
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -26,13 +28,9 @@ class AnalyzeIncomingMessageUseCaseTest {
 
     @Test
     fun `skips when monitoring disabled for source`() = runBlocking {
-        val settings = FakeSettingsRepository(
-            AppSettings(monitorWhatsapp = false),
-        )
-        val useCase = AnalyzeIncomingMessageUseCase(
-            ruleEngine = FakeRuleEngine(RiskLevel.HIGH),
-            analysisRepository = FakeAnalysisRepository(),
-            settingsRepository = settings,
+        val useCase = useCase(
+            settings = AppSettings(monitorWhatsapp = false),
+            risk = RiskLevel.HIGH,
         )
         val outcome = useCase.execute(
             IncomingMessage(
@@ -49,10 +47,10 @@ class AnalyzeIncomingMessageUseCaseTest {
     @Test
     fun `stores high risk and requests alert`() = runBlocking {
         val repo = FakeAnalysisRepository()
-        val useCase = AnalyzeIncomingMessageUseCase(
-            ruleEngine = FakeRuleEngine(RiskLevel.HIGH),
-            analysisRepository = repo,
-            settingsRepository = FakeSettingsRepository(AppSettings()),
+        val useCase = useCase(
+            settings = AppSettings(),
+            risk = RiskLevel.HIGH,
+            repo = repo,
         )
         val outcome = useCase.execute(
             IncomingMessage(
@@ -67,11 +65,95 @@ class AnalyzeIncomingMessageUseCaseTest {
         assertTrue(outcome!!.shouldAlert)
         assertEquals(RiskLevel.HIGH, outcome.record.riskLevel)
         assertEquals(1, repo.stored.size)
-        assertEquals(42L, outcome.record.createdAtEpochMs)
+        assertFalse(outcome.usedClassifier)
     }
+
+    @Test
+    fun `does not call classifier when rules only mode`() = runBlocking {
+        val classifier = CountingClassifier(isAvailable = true, score = 0.9f)
+        val useCase = useCase(
+            settings = AppSettings(rulesOnlyMode = true, modelEnabled = true),
+            risk = RiskLevel.SUSPICIOUS,
+            uncertain = true,
+            classifier = classifier,
+        )
+        val outcome = useCase.executeManual(sampleMessage())
+        assertEquals(0, classifier.calls)
+        assertFalse(outcome.usedClassifier)
+        assertEquals(RiskLevel.SUSPICIOUS, outcome.record.riskLevel)
+    }
+
+    @Test
+    fun `uses classifier when uncertain and model enabled`() = runBlocking {
+        val classifier = CountingClassifier(isAvailable = true, score = 0.9f)
+        val useCase = useCase(
+            settings = AppSettings(rulesOnlyMode = false, modelEnabled = true),
+            risk = RiskLevel.SUSPICIOUS,
+            uncertain = true,
+            classifier = classifier,
+        )
+        val outcome = useCase.executeManual(sampleMessage())
+        assertEquals(1, classifier.calls)
+        assertTrue(outcome.usedClassifier)
+        assertEquals(RiskLevel.HIGH, outcome.record.riskLevel)
+    }
+
+    @Test
+    fun `falls back to rules when classifier unavailable`() = runBlocking {
+        val classifier = CountingClassifier(isAvailable = false, score = 0.9f)
+        val useCase = useCase(
+            settings = AppSettings(modelEnabled = true),
+            risk = RiskLevel.SUSPICIOUS,
+            uncertain = true,
+            classifier = classifier,
+        )
+        val outcome = useCase.executeManual(sampleMessage())
+        assertEquals(0, classifier.calls)
+        assertFalse(outcome.usedClassifier)
+        assertEquals(RiskLevel.SUSPICIOUS, outcome.record.riskLevel)
+    }
+
+    @Test
+    fun `falls back to rules when classifier returns null`() = runBlocking {
+        val classifier = object : ScamClassifier {
+            override val isAvailable: Boolean = true
+            override suspend fun classify(text: String): ClassifierResult? = null
+        }
+        val useCase = useCase(
+            settings = AppSettings(modelEnabled = true),
+            risk = RiskLevel.SUSPICIOUS,
+            uncertain = true,
+            classifier = classifier,
+        )
+        val outcome = useCase.executeManual(sampleMessage())
+        assertFalse(outcome.usedClassifier)
+        assertEquals(RiskLevel.SUSPICIOUS, outcome.record.riskLevel)
+    }
+
+    private fun sampleMessage() = IncomingMessage(
+        sourceApp = SourceApp.MANUAL,
+        packageName = "manual",
+        sender = null,
+        text = "maybe scam",
+        receivedAtEpochMs = 1L,
+    )
+
+    private fun useCase(
+        settings: AppSettings,
+        risk: RiskLevel,
+        uncertain: Boolean = false,
+        repo: FakeAnalysisRepository = FakeAnalysisRepository(),
+        classifier: ScamClassifier = CountingClassifier(isAvailable = false),
+    ) = AnalyzeIncomingMessageUseCase(
+        ruleEngine = FakeRuleEngine(risk, uncertain),
+        analysisRepository = repo,
+        settingsRepository = FakeSettingsRepository(settings),
+        scamClassifier = classifier,
+    )
 
     private class FakeRuleEngine(
         private val level: RiskLevel,
+        private val uncertain: Boolean = false,
     ) : RuleEngine {
         override fun evaluate(
             text: String,
@@ -82,9 +164,20 @@ class AnalyzeIncomingMessageUseCaseTest {
                 riskLevel = level,
                 matchedRuleIds = listOf("fake"),
                 explanation = "test",
-                confidence = 0.9f,
-                isUncertain = false,
+                confidence = 0.6f,
+                isUncertain = uncertain,
             )
+    }
+
+    private class CountingClassifier(
+        override val isAvailable: Boolean,
+        private val score: Float = 0.5f,
+    ) : ScamClassifier {
+        var calls: Int = 0
+        override suspend fun classify(text: String): ClassifierResult {
+            calls++
+            return ClassifierResult(riskScore = score, explanation = "from model")
+        }
     }
 
     private class FakeSettingsRepository(

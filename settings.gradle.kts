@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ScamGuardian"
+rootProject.name = "Qorgau"
 include(":app")

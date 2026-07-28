@@ -16,5 +16,6 @@
     <color name="background_dark">#0F172A</color>
     <color name="surface_dark">#1E293B</color>
     <color name="text_primary_dark">#F1F5F9</color>
-    <color name="ic_launcher_background">#1B3A4B</color>
+    <!-- Matches Qorgau logo plate navy -->
+    <color name="ic_launcher_background">#1F3356</color>
 </resources>

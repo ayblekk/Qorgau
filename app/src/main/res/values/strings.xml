@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ScamGuardian</string>
+    <string name="app_name">Qorgau</string>
     <string name="tagline">Локальная защита от мошенников</string>
     <string name="privacy_badge">Только на устройстве</string>
 
@@ -54,6 +54,16 @@
     <string name="settings_monitor_telegram_hint">Анализировать уведомления Telegram</string>
     <string name="settings_model_enabled">Модель на устройстве</string>
     <string name="settings_model_enabled_hint">Опционально, только при неоднозначных случаях</string>
+    <string name="settings_section_device">Устройство</string>
+    <string name="settings_device_mode">Режим по возможностям</string>
+    <string name="settings_device_mode_rules">Только правила (слабое устройство)</string>
+    <string name="settings_device_mode_light">Правила + лёгкая модель</string>
+    <string name="settings_device_mode_full">Полный режим</string>
+    <string name="settings_device_ram">Память: ~%1$d МБ</string>
+    <string name="settings_model_status">Статус модели</string>
+    <string name="settings_model_status_available">Доступна на устройстве</string>
+    <string name="settings_model_status_unavailable">Не установлена — работают правила</string>
+    <string name="settings_fallback_hint">Если модель недоступна или слишком медленная, всегда используются только правила.</string>
     <string name="settings_clear_history">Очистить историю</string>
     <string name="settings_clear_history_confirm">Удалить все записи анализа с этого устройства?</string>
     <string name="settings_clear_history_done">История очищена</string>
@@ -73,7 +83,7 @@
     <string name="action_close">Закрыть</string>
     <string name="why_scam">Почему это скам?</string>
 
-    <string name="notification_listener_label">ScamGuardian — защита сообщений</string>
+    <string name="notification_listener_label">Qorgau — защита сообщений</string>
     <string name="alert_channel_name">Предупреждения о скаме</string>
     <string name="alert_channel_description">Локальные оповещения о подозрительных сообщениях. Данные не покидают устройство.</string>
     <string name="alert_title_high">Возможный скам</string>
@@ -83,4 +93,23 @@
     <string name="time_minutes_ago">%d мин назад</string>
     <string name="time_hours_ago">%d ч назад</string>
     <string name="time_days_ago">%d дн назад</string>
+
+    <string name="onboarding_title">Включим защиту</string>
+    <string name="onboarding_subtitle">Qorgau работает только на устройстве. Нужны разрешения, чтобы читать уведомления SMS, WhatsApp и Telegram и предупреждать о скаме.</string>
+    <string name="onboarding_step_alerts_title">Уведомления приложения</string>
+    <string name="onboarding_step_alerts_body">Чтобы показывать предупреждения, если сообщение похоже на скам.</string>
+    <string name="onboarding_step_listener_title">Доступ к уведомлениям</string>
+    <string name="onboarding_step_listener_body">Обязательно. Включите Qorgau в списке приложений с доступом к уведомлениям — без этого перехват сообщений не работает.</string>
+    <string name="onboarding_step_battery_title">Работа в фоне</string>
+    <string name="onboarding_step_battery_body">Отключите оптимизацию батареи, чтобы система не останавливала защиту.</string>
+    <string name="onboarding_action_allow">Разрешить</string>
+    <string name="onboarding_action_open_settings">Открыть настройки</string>
+    <string name="onboarding_continue">Начать защиту</string>
+    <string name="onboarding_enable_required">Включить обязательные</string>
+    <string name="onboarding_later">Продолжить без полной защиты</string>
+    <string name="onboarding_privacy_note">Тексты сообщений не отправляются в интернет. Анализ выполняется только на этом телефоне.</string>
+    <string name="banner_need_listener">Нет доступа к уведомлениям — защита неактивна. Нажмите, чтобы включить.</string>
+    <string name="banner_need_alerts">Нет разрешения на уведомления — алерты не покажутся. Нажмите, чтобы исправить.</string>
+    <string name="banner_need_permissions">Нужны разрешения для защиты. Нажмите, чтобы настроить.</string>
 </resources>
+

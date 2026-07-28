@@ -9,7 +9,7 @@ import org.junit.Test
 class NotificationDeduperTest {
 
     @Test
-    fun `duplicate within window is rejected`() {
+    fun `duplicate same key and text within window is rejected`() {
         var now = 1_000L
         val deduper = NotificationDeduper(windowMs = 30_000L, nowMs = { now })
         val message = sample("key-1", "hello scam")
@@ -19,6 +19,13 @@ class NotificationDeduperTest {
 
         now += 31_000L
         assertTrue(deduper.shouldProcess(message))
+    }
+
+    @Test
+    fun `same key with new text is accepted`() {
+        val deduper = NotificationDeduper(nowMs = { 5_000L })
+        assertTrue(deduper.shouldProcess(sample("same", "first body")))
+        assertTrue(deduper.shouldProcess(sample("same", "updated body with code")))
     }
 
     @Test

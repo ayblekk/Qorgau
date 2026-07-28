@@ -1,13 +1,15 @@
 package kz.qorgau.scamguardian.notification
 
+import android.content.ComponentName
+import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import kz.qorgau.scamguardian.ScamGuardianApp
 
 /**
- * Thin capture layer (ARCHITECTURE.md §3.1, RULES.md §3).
- * Extracts text and hands off to [MessageIngestor] — no analysis here.
+ * Thin capture layer for SMS / WhatsApp / Telegram notifications.
+ * Rebinds itself if the system disconnects the listener (common on aggressive OEMs).
  */
 class ScamNotificationListenerService : NotificationListenerService() {
 
@@ -16,14 +18,55 @@ class ScamNotificationListenerService : NotificationListenerService() {
 
     override fun onCreate() {
         super.onCreate()
+        bindIngestor()
+    }
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        bindIngestor()
+        Log.i(TAG, "Notification listener connected")
+        // Catch up on active messaging notifications already on the shade.
+        runCatching {
+            activeNotifications?.forEach { sbn ->
+                process(sbn)
+            }
+        }
+    }
+
+    override fun onListenerDisconnected() {
+        super.onListenerDisconnected()
+        Log.w(TAG, "Notification listener disconnected — requesting rebind")
+        val component = ComponentName(this, ScamNotificationListenerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            requestRebind(component)
+        }
+    }
+
+    override fun onNotificationPosted(sbn: StatusBarNotification?) {
+        if (sbn == null) return
+        process(sbn)
+    }
+
+    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
+        // No-op for Stage 1.
+    }
+
+    override fun onDestroy() {
+        ingestor = null
+        super.onDestroy()
+    }
+
+    private fun bindIngestor() {
         val app = application as? ScamGuardianApp
         ingestor = app?.container?.messageIngestor
         app?.container?.alertNotifier?.ensureChannel()
     }
 
-    override fun onNotificationPosted(sbn: StatusBarNotification?) {
-        if (sbn == null) return
-        val activeIngestor = ingestor ?: return
+    private fun process(sbn: StatusBarNotification) {
+        val activeIngestor = ingestor ?: run {
+            bindIngestor()
+            ingestor
+        } ?: return
 
         when (val result = extractor.extract(sbn, packageName)) {
             is NotificationTextExtractor.ExtractResult.Ignored -> {
@@ -37,24 +80,8 @@ class ScamNotificationListenerService : NotificationListenerService() {
         }
     }
 
-    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
-        // No-op for Stage 1.
-    }
-
-    override fun onListenerConnected() {
-        super.onListenerConnected()
-        Log.i(TAG, "Notification listener connected")
-    }
-
-    override fun onDestroy() {
-        ingestor = null
-        super.onDestroy()
-    }
-
     companion object {
         private const val TAG = "ScamNotifListener"
-
-        /** Debug-only reasons; never logs message bodies. */
         private const val DEBUG_LOG = false
     }
 }

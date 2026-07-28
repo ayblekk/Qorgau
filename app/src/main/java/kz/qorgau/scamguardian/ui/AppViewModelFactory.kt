@@ -24,6 +24,8 @@ class AppViewModelFactory(
                 SettingsViewModel(
                     settingsRepository = container.settingsRepository,
                     analysisRepository = container.analysisRepository,
+                    readCapability = { container.currentCapability() },
+                    scamClassifier = container.scamClassifier,
                 ) as T
             }
             else -> error("Unknown ViewModel: ${modelClass.name}")

@@ -57,7 +57,7 @@ class AlertNotifier(
             .take(120)
 
         val notification = NotificationCompat.Builder(appContext, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification_shield)
+            .setSmallIcon(R.drawable.ic_notification_logo)
             .setContentTitle(title)
             .setContentText(record.explanation)
             .setStyle(

@@ -2,7 +2,6 @@ package kz.qorgau.scamguardian.notification
 
 import kz.qorgau.scamguardian.domain.model.SourceApp
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -83,51 +82,34 @@ class NotificationTextExtractorTest {
     }
 
     @Test
-    fun `ignores group conversations flag`() {
+    fun `group conversations are still analyzed`() {
         val result = NotificationTextExtractor.extractFromParts(
             sourceApp = SourceApp.TELEGRAM,
             packageName = "org.telegram.messenger",
             title = "Family",
-            text = "Hello everyone",
+            text = "Hello everyone transfer money now",
             bigText = null,
             isGroupConversation = true,
             receivedAtEpochMs = 1L,
         )
-        assertEquals(
-            NotificationTextExtractor.IgnoreReason.GROUP_CHAT,
-            (result as NotificationTextExtractor.ExtractResult.Ignored).reason,
-        )
+        assertTrue(result is NotificationTextExtractor.ExtractResult.Success)
+        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
+        assertTrue(msg.isGroupConversation)
     }
 
     @Test
-    fun `detects multi-sender group preview heuristically`() {
-        val isGroup = NotificationTextExtractor.isGroupConversation(
-            sourceApp = SourceApp.WHATSAPP,
-            title = "Work Chat",
-            text = "Alice: hi\nBob: ok\nCarol: thanks",
+    fun `uses last inbox text line when body empty`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.SMS,
+            packageName = "com.android.mms",
+            title = "Messages",
+            text = null,
+            bigText = null,
+            textLines = listOf("old msg", "Kaspi: пришлите код"),
+            receivedAtEpochMs = 1L,
         )
-        assertTrue(isGroup)
-    }
-
-    @Test
-    fun `detects participant count in title as group`() {
-        val isGroup = NotificationTextExtractor.isGroupConversation(
-            sourceApp = SourceApp.WHATSAPP,
-            title = "Family (12)",
-            text = "hello",
-        )
-        assertTrue(isGroup)
-    }
-
-    @Test
-    fun `one-to-one chat is not treated as group`() {
-        val isGroup = NotificationTextExtractor.isGroupConversation(
-            sourceApp = SourceApp.TELEGRAM,
-            title = "Alice",
-            text = "Привет, как дела?",
-            flaggedAsGroup = false,
-        )
-        assertFalse(isGroup)
+        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
+        assertTrue(msg.text.contains("код"))
     }
 
     @Test

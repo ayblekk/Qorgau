@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ScamGuardian</string>
+    <string name="app_name">Qorgau</string>
     <string name="tagline">Алаяқтардан жергілікті қорғаныс</string>
     <string name="privacy_badge">Тек құрылғыда</string>
 
@@ -54,6 +54,16 @@
     <string name="settings_monitor_telegram_hint">Telegram хабарламаларын талдау</string>
     <string name="settings_model_enabled">Құрылғыдағы модель</string>
     <string name="settings_model_enabled_hint">Қосымша, тек күмәнді жағдайларда</string>
+    <string name="settings_section_device">Құрылғы</string>
+    <string name="settings_device_mode">Мүмкіндіктер режимі</string>
+    <string name="settings_device_mode_rules">Тек ережелер (әлсіз құрылғы)</string>
+    <string name="settings_device_mode_light">Ережелер + жеңіл модель</string>
+    <string name="settings_device_mode_full">Толық режим</string>
+    <string name="settings_device_ram">Жад: ~%1$d МБ</string>
+    <string name="settings_model_status">Модель күйі</string>
+    <string name="settings_model_status_available">Құрылғыда қолжетімді</string>
+    <string name="settings_model_status_unavailable">Орнатылмаған — ережелер жұмыс істейді</string>
+    <string name="settings_fallback_hint">Модель жоқ немесе баяу болса, әрқашан тек ережелер қолданылады.</string>
     <string name="settings_clear_history">Тарихты тазалау</string>
     <string name="settings_clear_history_confirm">Осы құрылғыдағы барлық талдау жазбаларын жою керек пе?</string>
     <string name="settings_clear_history_done">Тарих тазартылды</string>
@@ -73,7 +83,7 @@
     <string name="action_close">Жабу</string>
     <string name="why_scam">Неге бұл алаяқтық?</string>
 
-    <string name="notification_listener_label">ScamGuardian — хабарлама қорғанысы</string>
+    <string name="notification_listener_label">Qorgau — хабарлама қорғанысы</string>
     <string name="alert_channel_name">Алаяқтық туралы ескертулер</string>
     <string name="alert_channel_description">Күдікті хабарламалар туралы жергілікті ескертулер. Деректер құрылғыдан шықпайды.</string>
     <string name="alert_title_high">Ықтимал алаяқтық</string>
@@ -83,4 +93,23 @@
     <string name="time_minutes_ago">%d мин бұрын</string>
     <string name="time_hours_ago">%d сағ бұрын</string>
     <string name="time_days_ago">%d күн бұрын</string>
+
+    <string name="onboarding_title">Қорғанысты қосайық</string>
+    <string name="onboarding_subtitle">Qorgau тек құрылғыда жұмыс істейді. SMS, WhatsApp және Telegram хабарламаларын оқу және ескерту үшін рұқсаттар қажет.</string>
+    <string name="onboarding_step_alerts_title">Қосымша хабарламалары</string>
+    <string name="onboarding_step_alerts_body">Хабарлама алаяқтыққа ұқсаса ескерту көрсету үшін.</string>
+    <string name="onboarding_step_listener_title">Хабарламаларға қол жеткізу</string>
+    <string name="onboarding_step_listener_body">Міндетті. Qorgau-ды хабарлама қолжетімділігі тізімінде қосыңыз — онсыз ұстау жұмыс істемейді.</string>
+    <string name="onboarding_step_battery_title">Фондық жұмыс</string>
+    <string name="onboarding_step_battery_body">Батареяны оңтайландыруды өшіріңіз, жүйе қорғанысты тоқтатпауы үшін.</string>
+    <string name="onboarding_action_allow">Рұқсат беру</string>
+    <string name="onboarding_action_open_settings">Баптауларды ашу</string>
+    <string name="onboarding_continue">Қорғанысты бастау</string>
+    <string name="onboarding_enable_required">Міндеттілерді қосу</string>
+    <string name="onboarding_later">Толық қорғаныссыз жалғастыру</string>
+    <string name="onboarding_privacy_note">Хабарлама мәтіндері интернетке жіберілмейді. Талдау тек осы телефонда орындалады.</string>
+    <string name="banner_need_listener">Хабарламаларға қол жеткізу жоқ — қорғаныс белсенді емес. Қосу үшін басыңыз.</string>
+    <string name="banner_need_alerts">Хабарлама рұқсаты жоқ — ескертулер шықпайды. Түзету үшін басыңыз.</string>
+    <string name="banner_need_permissions">Қорғаныс үшін рұқсаттар керек. Баптау үшін басыңыз.</string>
 </resources>
+

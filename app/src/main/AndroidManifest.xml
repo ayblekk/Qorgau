@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Core analysis is offline. No INTERNET for Stage 1 core path (ARCHITECTURE.md §6). -->
-    <!-- POST_NOTIFICATIONS: show local scam alerts on Android 13+. -->
+    <!-- Core analysis is offline. No INTERNET for Stage 1 core path. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".ScamGuardianApp"
@@ -27,6 +29,10 @@
             </intent-filter>
         </activity>
 
+        <!--
+          No default_filter_types meta-data: we want all notification types from
+          messaging packages (some OEMs post SMS outside "conversations").
+        -->
         <service
             android:name=".notification.ScamNotificationListenerService"
             android:exported="true"
@@ -35,10 +41,18 @@
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
-            <meta-data
-                android:name="android.service.notification.default_filter_types"
-                android:value="conversations|alerting" />
         </service>
+
+        <receiver
+            android:name=".notification.BootCompletedReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

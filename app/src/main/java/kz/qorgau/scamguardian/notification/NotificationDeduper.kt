@@ -3,8 +3,8 @@ package kz.qorgau.scamguardian.notification
 import kz.qorgau.scamguardian.domain.model.IncomingMessage
 
 /**
- * In-memory dedup for duplicate notification posts (same content within a short window).
- * Does not store message text beyond a hash fingerprint.
+ * In-memory dedup for duplicate notification posts.
+ * Same notification key with **changed text** is allowed (WhatsApp updates in place).
  */
 class NotificationDeduper(
     private val windowMs: Long = NotificationCaptureConfig.DEDUP_WINDOW_MS,
@@ -37,11 +37,13 @@ class NotificationDeduper(
     }
 
     private fun fingerprintOf(message: IncomingMessage): String {
-        // Prefer platform key when present (stable per notification update).
-        message.notificationKey?.let { key ->
-            return "key:$key"
+        val sample = message.text.take(160).hashCode()
+        val key = message.notificationKey
+        // Include text hash so content updates on the same key still run.
+        return if (key != null) {
+            "key:$key|$sample"
+        } else {
+            "${message.sourceApp.storageValue}|${message.sender}|$sample"
         }
-        val sample = message.text.take(120)
-        return "${message.sourceApp.storageValue}|${message.sender}|${sample.hashCode()}"
     }
 }

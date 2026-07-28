@@ -1,4 +1,4 @@
-# ScamGuardian (Stage 1)
+# Qorgau (Stage 1)
 
 Privacy-first, on-device Android scam detector for SMS / WhatsApp / Telegram (KZ + CIS).
 
@@ -52,11 +52,11 @@ JDK 17+ required (Android Studio JBR works).
 3. ✅ NotificationListenerService + text extraction + thin pipeline
 4. ✅ Analyze → store → local alert
 5. ✅ Screens (History, Settings, Manual check) + ru/kk UI
-6. i18n polish + capability detection + model fallback
+6. ✅ Capability detection + classifier stub + fail-safe fallback + 90-day prune
 
 ### Notification capture
 
-Enable in system settings: **Settings → Apps → Special access → Notification access → ScamGuardian**.
+Enable in system settings: **Settings → Apps → Special access → Notification access → Qorgau**.
 
 Flow: `ScamNotificationListenerService` → `NotificationTextExtractor` → `MessageIngestor` → `AnalyzeIncomingMessageUseCase` (rules) → Room → local alert.
 

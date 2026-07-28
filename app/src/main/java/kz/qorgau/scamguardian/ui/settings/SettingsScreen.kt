@@ -47,6 +47,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kz.qorgau.scamguardian.R
+import kz.qorgau.scamguardian.domain.capability.DeviceCapabilityMode
 import kz.qorgau.scamguardian.domain.model.AppLanguage
 import kz.qorgau.scamguardian.domain.model.Sensitivity
 import kz.qorgau.scamguardian.ui.components.PrivacyBadge
@@ -61,6 +62,8 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val capability by viewModel.capability.collectAsStateWithLifecycle()
+    val modelAvailable by viewModel.modelAvailable.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -82,6 +85,7 @@ fun SettingsScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 listenerEnabled = isNotificationListenerEnabled(context)
                 notificationsGranted = arePostNotificationsGranted(context)
+                viewModel.refreshCapability()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -174,6 +178,51 @@ fun SettingsScreen(
                 checked = settings.monitorTelegram,
                 onCheckedChange = viewModel::setMonitorTelegram,
             )
+        }
+
+        SectionHeader(stringResource(R.string.settings_section_device))
+
+        SettingsCard {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_device_mode),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = when (capability.mode) {
+                        DeviceCapabilityMode.RULES_ONLY ->
+                            stringResource(R.string.settings_device_mode_rules)
+                        DeviceCapabilityMode.RULES_PLUS_LIGHT ->
+                            stringResource(R.string.settings_device_mode_light)
+                        DeviceCapabilityMode.FULL ->
+                            stringResource(R.string.settings_device_mode_full)
+                    },
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(R.string.settings_device_ram, capability.totalRamMb),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                HorizontalDivider()
+                Text(
+                    text = stringResource(R.string.settings_model_status),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = if (modelAvailable) {
+                        stringResource(R.string.settings_model_status_available)
+                    } else {
+                        stringResource(R.string.settings_model_status_unavailable)
+                    },
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(R.string.settings_fallback_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         SectionHeader(stringResource(R.string.settings_section_analysis))

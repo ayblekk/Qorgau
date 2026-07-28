@@ -17,11 +17,12 @@ Core principles:
 
 ## 2. Brand & Tone
 
-- **Name:** ScamGuardian  
+- **Name:** Qorgau (product name; internal codename was ScamGuardian)  
 - **Tagline options:**  
   - “Защита, которая остаётся с тобой”  
   - “Скам не пройдёт. Данные тоже.”  
-  - “Локальная защита от мошенников”
+  - “Локальная защита от мошенников”  
+  - “Қорғау — сенімен бірге”
 - **Personality:** Calm, competent, respectful, slightly serious but not cold.
 - **Voice in UI copy:** Direct, plain language, no jargon, no fear-mongering.
 
