@@ -19,9 +19,6 @@ data class AppSettingsEntity(
     @ColumnInfo(name = "sensitivity", defaultValue = "medium")
     val sensitivity: String = "medium",
 
-    @ColumnInfo(name = "rules_only_mode", defaultValue = "0")
-    val rulesOnlyMode: Boolean = false,
-
     @ColumnInfo(name = "monitor_sms", defaultValue = "1")
     val monitorSms: Boolean = true,
 
@@ -30,12 +27,6 @@ data class AppSettingsEntity(
 
     @ColumnInfo(name = "monitor_telegram", defaultValue = "1")
     val monitorTelegram: Boolean = true,
-
-    @ColumnInfo(name = "model_enabled", defaultValue = "1")
-    val modelEnabled: Boolean = true,
-
-    @ColumnInfo(name = "last_model_check", defaultValue = "0")
-    val lastModelCheck: Long = 0L,
 ) {
     companion object {
         const val DEFAULT_ID: Int = 1

@@ -1,6 +1,6 @@
 # Coding & Collaboration Rules
 **Project:** ScamGuardian (Stage 1)  
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-07-28  
 
 ## 1. Core Principles
@@ -15,7 +15,7 @@
    Do not abstract too early. Copy-paste is acceptable for the first 2–3 similar blocks. Extract when the pattern is stable.
 
 4. **SOLID where it helps readability**  
-   Especially Single Responsibility for the Rule Engine, Classifier wrapper, and Notification processing.
+   Especially Single Responsibility for the Rule Engine and Notification processing.
 
 5. **Open and auditable**  
    Detection logic and rule definitions must remain readable by a security-conscious outsider.
@@ -25,7 +25,7 @@
 - **Primary language:** Kotlin
 - Follow official Kotlin coding conventions.
 - Prefer `val` over `var`.
-- Use data classes for simple models.
+- Use data classes for simple domain types.
 - Explicit visibility modifiers.
 - Meaningful names (no `tmp`, `data2`, `process()`).
 
@@ -38,11 +38,11 @@
 ## 3. Architecture Rules
 
 - **Layering**  
-  UI → ViewModel / UseCase → Domain (RuleEngine, Classifier) → Data (Room, File storage).  
-  Do not let UI talk directly to Room or the model runtime.
+  UI → ViewModel / UseCase → Domain (RuleEngine) → Data (Room, File storage).  
+  Do not let UI talk directly to Room.
 
 - **Dependency direction**  
-  High-level modules must not depend on low-level details. Inject runtimes and rule sources.
+  High-level modules must not depend on low-level details. Inject rule sources.
 
 - **No God classes**  
   NotificationListenerService should be thin — it extracts data and hands it to a dedicated analyzer.
@@ -58,54 +58,44 @@
 - Rule evaluation must be pure (no side effects).
 - Keep the rule evaluation path extremely fast (target < 20–30 ms).
 
-## 5. Model Integration Rules
-
-- Model loading and inference must be isolated behind a clear interface (`ScamClassifier`).
-- Always have a working pure-rules fallback path.
-- Never block the main thread on model inference.
-- Log model failures locally (without message content) for debugging.
-- Model files must be verified by checksum before use.
-
-## 6. Testing Expectations
+## 5. Testing Expectations
 
 - Unit tests for Rule Engine (high coverage on pattern matching).
 - Unit tests for text cleaning / normalization.
 - Instrumentation tests for NotificationListener extraction (where practical).
 - Manual test set of at least 50 real local scam examples + 50 clean messages before any release.
 
-## 7. Git & Commit Rules
+## 6. Git & Commit Rules
 
 - Meaningful commit messages (what + why).
 - Small, focused commits.
-- Do not commit model weight files to the main repository if they are large — use Git LFS or release assets.
 - `main` / `master` must always build and pass basic checks.
 
-## 8. Documentation Rules
+## 7. Documentation Rules
 
 - Public functions that implement detection logic need KDoc.
 - Complex decisions (why a certain threshold was chosen, why a rule exists) should be commented.
 - Keep the five context documents (`PRD`, `DESIGN`, `ARCHITECTURE`, `SCHEMA`, `RULES`) up to date when scope changes.
 
-## 9. Performance & Battery Rules
+## 8. Performance & Battery Rules
 
-- Prefer rules → model cascade.
+- Detection path is rules-only; keep it cheap.
 - Cache compiled patterns.
 - Respect Doze and App Standby. Use appropriate foreground service type only when necessary and explain it to the user.
 - Measure on a real mid-range device (not only emulators or flagships).
 
-## 10. Security Checklist (before every release)
+## 9. Security Checklist (before every release)
 
 - [ ] No `INTERNET` permission required for core path (or clearly optional).
 - [ ] Message content never written to logs in release builds.
 - [ ] No third-party SDK that can read notifications or clipboard.
-- [ ] ProGuard / R8 rules do not break the model runtime.
 - [ ] Privacy policy and open-source license are present.
 
-## 11. What We Explicitly Avoid in Stage 1
+## 10. What We Explicitly Avoid in Stage 1
 
 - Account systems or cloud sync of messages.
 - Automatic call blocking or number blacklisting (comes later).
-- Overly complex ML pipelines or continuous fine-tuning on-device.
+- On-device ML / LLM runtimes or model downloads.
 - Dark patterns or aggressive permission requests.
 
 ---

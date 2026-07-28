@@ -129,6 +129,22 @@ class DefaultRuleEngineTest {
         )
     }
 
+    @Test
+    fun `explanation uses english when language is en`() {
+        val result = engine.evaluate(
+            text = "Kaspi Bank: your account will be blocked. Send the SMS code now.",
+            language = AppLanguage.ENGLISH,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertTrue(result.riskLevel != RiskLevel.SAFE)
+        assertTrue(
+            result.explanation.contains("scam", ignoreCase = true) ||
+                result.explanation.contains("suspicious", ignoreCase = true) ||
+                result.explanation.contains("code", ignoreCase = true) ||
+                result.explanation.contains("Kaspi", ignoreCase = true),
+        )
+    }
+
     private fun readDefaultRulesJson(): String {
         val candidates = listOf(
             File("src/main/assets/rules/default_rules_v1.json"),

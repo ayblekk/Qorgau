@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -47,7 +48,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kz.qorgau.scamguardian.R
-import kz.qorgau.scamguardian.domain.capability.DeviceCapabilityMode
 import kz.qorgau.scamguardian.domain.model.AppLanguage
 import kz.qorgau.scamguardian.domain.model.Sensitivity
 import kz.qorgau.scamguardian.ui.components.PrivacyBadge
@@ -62,8 +62,6 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
-    val capability by viewModel.capability.collectAsStateWithLifecycle()
-    val modelAvailable by viewModel.modelAvailable.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -85,7 +83,6 @@ fun SettingsScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 listenerEnabled = isNotificationListenerEnabled(context)
                 notificationsGranted = arePostNotificationsGranted(context)
-                viewModel.refreshCapability()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -136,6 +133,11 @@ fun SettingsScreen(
                 } else {
                     stringResource(R.string.settings_notification_access_off)
                 },
+                subtitleColor = if (listenerEnabled) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    null
+                },
                 onClick = {
                     context.startActivity(notificationListenerSettingsIntent())
                 },
@@ -180,51 +182,6 @@ fun SettingsScreen(
             )
         }
 
-        SectionHeader(stringResource(R.string.settings_section_device))
-
-        SettingsCard {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(R.string.settings_device_mode),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = when (capability.mode) {
-                        DeviceCapabilityMode.RULES_ONLY ->
-                            stringResource(R.string.settings_device_mode_rules)
-                        DeviceCapabilityMode.RULES_PLUS_LIGHT ->
-                            stringResource(R.string.settings_device_mode_light)
-                        DeviceCapabilityMode.FULL ->
-                            stringResource(R.string.settings_device_mode_full)
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = stringResource(R.string.settings_device_ram, capability.totalRamMb),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                HorizontalDivider()
-                Text(
-                    text = stringResource(R.string.settings_model_status),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = if (modelAvailable) {
-                        stringResource(R.string.settings_model_status_available)
-                    } else {
-                        stringResource(R.string.settings_model_status_unavailable)
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = stringResource(R.string.settings_fallback_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-
         SectionHeader(stringResource(R.string.settings_section_analysis))
 
         SettingsCard {
@@ -242,6 +199,11 @@ fun SettingsScreen(
                 label = stringResource(R.string.settings_language_kk),
                 selected = settings.language == AppLanguage.KAZAKH,
                 onSelect = { viewModel.setLanguage(AppLanguage.KAZAKH) },
+            )
+            LanguageOption(
+                label = stringResource(R.string.settings_language_en),
+                selected = settings.language == AppLanguage.ENGLISH,
+                onSelect = { viewModel.setLanguage(AppLanguage.ENGLISH) },
             )
             HorizontalDivider()
             Text(
@@ -269,20 +231,6 @@ fun SettingsScreen(
                 label = stringResource(R.string.settings_sensitivity_high),
                 selected = settings.sensitivity == Sensitivity.HIGH,
                 onSelect = { viewModel.setSensitivity(Sensitivity.HIGH) },
-            )
-            HorizontalDivider()
-            SettingsToggleRow(
-                title = stringResource(R.string.settings_rules_only),
-                subtitle = stringResource(R.string.settings_rules_only_hint),
-                checked = settings.rulesOnlyMode,
-                onCheckedChange = viewModel::setRulesOnly,
-            )
-            HorizontalDivider()
-            SettingsToggleRow(
-                title = stringResource(R.string.settings_model_enabled),
-                subtitle = stringResource(R.string.settings_model_enabled_hint),
-                checked = settings.modelEnabled,
-                onCheckedChange = viewModel::setModelEnabled,
             )
         }
 
@@ -347,6 +295,7 @@ private fun SettingsToggleRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -359,7 +308,10 @@ private fun SettingsToggleRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+        )
     }
 }
 
@@ -368,6 +320,7 @@ private fun SettingsNavRow(
     title: String,
     subtitle: String,
     trailing: String? = null,
+    subtitleColor: Color? = null,
     onClick: () -> Unit,
 ) {
     Column(
@@ -380,7 +333,7 @@ private fun SettingsNavRow(
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = subtitleColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
         )
         trailing?.let {
             Spacer(Modifier.height(4.dp))
@@ -402,11 +355,18 @@ private fun LanguageOption(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .selectable(selected = selected, onClick = onSelect, role = Role.RadioButton)
+            .selectable(
+                selected = selected,
+                onClick = onSelect,
+                role = Role.RadioButton,
+            )
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        RadioButton(selected = selected, onClick = onSelect)
+        RadioButton(
+            selected = selected,
+            onClick = null, // row handles selection (avoids double-fire)
+        )
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,

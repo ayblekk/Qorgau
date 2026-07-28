@@ -1,16 +1,10 @@
 package kz.qorgau.scamguardian.di
 
 import android.content.Context
-import kz.qorgau.scamguardian.data.capability.AndroidDeviceCapabilityReader
 import kz.qorgau.scamguardian.data.local.db.ScamGuardianDatabase
 import kz.qorgau.scamguardian.data.repository.AnalysisRepositoryImpl
 import kz.qorgau.scamguardian.data.repository.SettingsRepositoryImpl
 import kz.qorgau.scamguardian.data.rules.RulePackLoader
-import kz.qorgau.scamguardian.domain.capability.CapabilityBootstrap
-import kz.qorgau.scamguardian.domain.capability.DeviceCapability
-import kz.qorgau.scamguardian.domain.classifier.ScamClassifier
-import kz.qorgau.scamguardian.domain.classifier.TimedScamClassifier
-import kz.qorgau.scamguardian.domain.classifier.UnavailableScamClassifier
 import kz.qorgau.scamguardian.domain.repository.AnalysisRepository
 import kz.qorgau.scamguardian.domain.repository.SettingsRepository
 import kz.qorgau.scamguardian.domain.rules.DefaultRuleEngine
@@ -48,32 +42,11 @@ class AppContainer(context: Context) {
         DefaultRuleEngine(pack)
     }
 
-    val deviceCapabilityReader: AndroidDeviceCapabilityReader by lazy {
-        AndroidDeviceCapabilityReader(appContext)
-    }
-
-    val capabilityBootstrap: CapabilityBootstrap by lazy {
-        CapabilityBootstrap(
-            context = appContext,
-            settingsRepository = settingsRepository,
-            readCapability = { deviceCapabilityReader.read() },
-        )
-    }
-
-    /**
-     * Stage 1 ships without model weights — always unavailable.
-     * Swap [UnavailableScamClassifier] for a real runtime later without changing the pipeline.
-     */
-    val scamClassifier: ScamClassifier by lazy {
-        TimedScamClassifier(UnavailableScamClassifier())
-    }
-
     val analyzeIncomingMessage: AnalyzeIncomingMessageUseCase by lazy {
         AnalyzeIncomingMessageUseCase(
             ruleEngine = ruleEngine,
             analysisRepository = analysisRepository,
             settingsRepository = settingsRepository,
-            scamClassifier = scamClassifier,
         )
     }
 
@@ -92,6 +65,4 @@ class AppContainer(context: Context) {
             deduper = NotificationDeduper(),
         )
     }
-
-    fun currentCapability(): DeviceCapability = deviceCapabilityReader.read()
 }

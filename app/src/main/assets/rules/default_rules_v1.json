@@ -1,12 +1,12 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "default_kz_cis",
-  "description": "Kazakhstan / CIS text scam patterns for Stage 1 (auditable).",
+  "description": "Kazakhstan / CIS text scam patterns for Stage 1 (auditable). RU/KK/EN explanations.",
   "rules": [
     {
       "id": "bank_kaspi_impersonation",
       "category": "bank_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.42,
       "match": "any",
       "patterns": [
@@ -18,12 +18,13 @@
         "каспи голд"
       ],
       "description_ru": "Упоминание Kaspi в подозрительном контексте (часто имитация банка).",
-      "description_kk": "Күдікті контекстте Kaspi атауы (жиі банкке еліктеу)."
+      "description_kk": "Күдікті контекстте Kaspi атауы (жиі банкке еліктеу).",
+      "description_en": "Mentions Kaspi in a suspicious context (often bank impersonation)."
     },
     {
       "id": "bank_halyk_impersonation",
       "category": "bank_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.40,
       "match": "any",
       "patterns": [
@@ -35,12 +36,13 @@
         "homebank"
       ],
       "description_ru": "Упоминание Halyk / Народный банк — типичная имитация.",
-      "description_kk": "Halyk / Халық банкі атауы — типтік еліктеу."
+      "description_kk": "Halyk / Халық банкі атауы — типтік еліктеу.",
+      "description_en": "Mentions Halyk / Narodny Bank — a common impersonation tactic."
     },
     {
       "id": "bank_freedom_impersonation",
       "category": "bank_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.38,
       "match": "any",
       "patterns": [
@@ -51,12 +53,13 @@
         "freedombank"
       ],
       "description_ru": "Упоминание Freedom Bank / Freedom Finance.",
-      "description_kk": "Freedom Bank / Freedom Finance атауы."
+      "description_kk": "Freedom Bank / Freedom Finance атауы.",
+      "description_en": "Mentions Freedom Bank / Freedom Finance."
     },
     {
       "id": "bank_jusan_bcc",
       "category": "bank_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.36,
       "match": "any",
       "patterns": [
@@ -70,12 +73,13 @@
         "евразийский банк"
       ],
       "description_ru": "Упоминание другого казахстанского банка.",
-      "description_kk": "Басқа қазақстандық банктің атауы."
+      "description_kk": "Басқа қазақстандық банктің атауы.",
+      "description_en": "Mentions another Kazakhstan bank."
     },
     {
       "id": "urgency_finance",
       "category": "urgency_finance",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.35,
       "match": "any",
       "patterns": [
@@ -99,12 +103,13 @@
         "шот бұғатталады"
       ],
       "description_ru": "Давление срочности + финансовое действие.",
-      "description_kk": "Шұғылдық қысымы + қаржылық әрекет."
+      "description_kk": "Шұғылдық қысымы + қаржылық әрекет.",
+      "description_en": "Urgency pressure plus a financial action."
     },
     {
       "id": "otp_code_request",
       "category": "credential_theft",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.48,
       "match": "any",
       "patterns": [
@@ -132,12 +137,13 @@
         "растау коды"
       ],
       "description_ru": "Запрос кода из SMS / OTP / PIN — классическая кража доступа.",
-      "description_kk": "SMS / OTP / PIN кодын сұрау — қолжетімділікті ұрлау."
+      "description_kk": "SMS / OTP / PIN кодын сұрау — қолжетімділікті ұрлау.",
+      "description_en": "Asks for an SMS / OTP / PIN code — classic credential theft."
     },
     {
       "id": "remote_access_tools",
       "category": "remote_access",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.55,
       "match": "any",
       "patterns": [
@@ -156,12 +162,13 @@
         "қашықтан қол жеткізу"
       ],
       "description_ru": "Просьба установить удалённый доступ (AnyDesk / TeamViewer и т.п.).",
-      "description_kk": "Қашықтан қолжетімділік бағдарламасын орнату сұранысы."
+      "description_kk": "Қашықтан қолжетімділік бағдарламасын орнату сұранысы.",
+      "description_en": "Asks to install remote access (AnyDesk / TeamViewer, etc.)."
     },
     {
       "id": "police_prosecutor_impersonation",
       "category": "authority_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.45,
       "match": "any",
       "patterns": [
@@ -181,12 +188,13 @@
         "құқық қорғау"
       ],
       "description_ru": "Имитация полиции / прокуратуры / силовиков.",
-      "description_kk": "Полиция / прокуратура / құқық қорғау органдарына еліктеу."
+      "description_kk": "Полиция / прокуратура / құқық қорғау органдарына еліктеу.",
+      "description_en": "Impersonates police / prosecutor / law enforcement."
     },
     {
       "id": "bank_security_impersonation",
       "category": "bank_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.46,
       "match": "any",
       "patterns": [
@@ -200,12 +208,13 @@
         "банктің қауіпсіздік"
       ],
       "description_ru": "Имитация службы безопасности банка (часто + запрос кода).",
-      "description_kk": "Банк қауіпсіздік қызметіне еліктеу (жиі код сұрау)."
+      "description_kk": "Банк қауіпсіздік қызметіне еліктеу (жиі код сұрау).",
+      "description_en": "Impersonates bank security (often combined with a code request)."
     },
     {
       "id": "gov_social_payment",
       "category": "gov_impersonation",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.40,
       "match": "any",
       "patterns": [
@@ -224,12 +233,13 @@
         "зейнетақы"
       ],
       "description_ru": "Имитация госуслуг / соцвыплат / eGov.",
-      "description_kk": "Мемлекеттік қызмет / әлеуметтік төлем / eGov еліктеуі."
+      "description_kk": "Мемлекеттік қызмет / әлеуметтік төлем / eGov еліктеуі.",
+      "description_en": "Impersonates government services / social payments / eGov."
     },
     {
       "id": "prize_lottery_scam",
       "category": "prize_scam",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.38,
       "match": "any",
       "patterns": [
@@ -246,12 +256,13 @@
         "сыйлық алу үшін"
       ],
       "description_ru": "«Вы выиграли» / лотерея / приз за оплату.",
-      "description_kk": "«Сіз ұтып алдыңыз» / лотерея / төлем арқылы сыйлық."
+      "description_kk": "«Сіз ұтып алдыңыз» / лотерея / төлем арқылы сыйлық.",
+      "description_en": "“You won” / lottery / prize that requires payment."
     },
     {
       "id": "delivery_parcel_scam",
       "category": "delivery_scam",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.34,
       "match": "any",
       "patterns": [
@@ -269,12 +280,13 @@
         "кеден алымы"
       ],
       "description_ru": "Фейковая посылка / таможня / доставка.",
-      "description_kk": "Жалған жөнелтім / кеден / жеткізу."
+      "description_kk": "Жалған жөнелтім / кеден / жеткізу.",
+      "description_en": "Fake parcel / customs / delivery scam."
     },
     {
       "id": "card_data_request",
       "category": "credential_theft",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.50,
       "match": "any",
       "patterns": [
@@ -288,12 +300,13 @@
         "карта деректері"
       ],
       "description_ru": "Прямой запрос данных банковской карты.",
-      "description_kk": "Банк картасы деректерін тікелей сұрау."
+      "description_kk": "Банк картасы деректерін тікелей сұрау.",
+      "description_en": "Directly asks for bank card details."
     },
     {
       "id": "suspicious_short_link",
       "category": "phishing_link",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.28,
       "match": "any",
       "patterns": [
@@ -306,12 +319,13 @@
         "сілтеме бойынша растаңыз"
       ],
       "description_ru": "Подозрительная короткая или «проверочная» ссылка.",
-      "description_kk": "Күдікті қысқа немесе «растау» сілтемесі."
+      "description_kk": "Күдікті қысқа немесе «растау» сілтемесі.",
+      "description_en": "Suspicious short or “verification” link."
     },
     {
       "id": "account_blocked_threat",
       "category": "urgency_finance",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.36,
       "match": "any",
       "patterns": [
@@ -328,12 +342,13 @@
         "күдікті операция"
       ],
       "description_ru": "Угроза блокировки счёта / «подозрительная операция».",
-      "description_kk": "Шотты бұғаттау қаупі / «күдікті операция»."
+      "description_kk": "Шотты бұғаттау қаупі / «күдікті операция».",
+      "description_en": "Threat of account lock / “suspicious transaction”."
     },
     {
       "id": "investment_crypto_scam",
       "category": "investment_scam",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.33,
       "match": "any",
       "patterns": [
@@ -348,12 +363,13 @@
         "инвестиция жасаңыз"
       ],
       "description_ru": "Агрессивные инвест-/крипто-обещания.",
-      "description_kk": "Агрессивті инвестиция/крипто уәделері."
+      "description_kk": "Агрессивті инвестиция/крипто уәделері.",
+      "description_en": "Aggressive investment / crypto promises."
     },
     {
       "id": "relative_emergency_money",
       "category": "social_engineering",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.37,
       "match": "any",
       "patterns": [
@@ -372,12 +388,13 @@
         "шұғыл ақша керек"
       ],
       "description_ru": "Схема «родственник в беде» / новый номер.",
-      "description_kk": "«Туыс қиындықта» / жаңа нөмір схемасы."
+      "description_kk": "«Туыс қиындықта» / жаңа нөмір схемасы.",
+      "description_en": "“Relative in trouble” / new phone number scheme."
     },
     {
       "id": "secret_keep_quiet",
       "category": "social_engineering",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.30,
       "match": "any",
       "patterns": [
@@ -390,12 +407,13 @@
         "құпия операция"
       ],
       "description_ru": "Просьба сохранить секрет — признак социальной инженерии.",
-      "description_kk": "Құпия сақтауды сұрау — әлеуметтік инженерия белгісі."
+      "description_kk": "Құпия сақтауды сұрау — әлеуметтік инженерия белгісі.",
+      "description_en": "Asks to keep a secret — social engineering signal."
     },
     {
       "id": "combo_bank_and_code",
       "category": "combo_high_risk",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.70,
       "match": "all",
       "patterns": [
@@ -403,12 +421,13 @@
         "regex:(?:код|code|пин|cvv|otp)"
       ],
       "description_ru": "Банк + запрос кода в одном сообщении — очень высокий риск.",
-      "description_kk": "Банк + код сұрау бір хабарламада — өте жоғары қауіп."
+      "description_kk": "Банк + код сұрау бір хабарламада — өте жоғары қауіп.",
+      "description_en": "Bank mention plus a code request in one message — very high risk."
     },
     {
       "id": "combo_bank_and_remote",
       "category": "combo_high_risk",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.75,
       "match": "all",
       "patterns": [
@@ -416,12 +435,13 @@
         "regex:(?:anydesk|teamviewer|удал[её]нн|қашықтан)"
       ],
       "description_ru": "Банк/карта + удалённый доступ — почти наверняка мошенничество.",
-      "description_kk": "Банк/карта + қашықтан қолжетімділік — дерлік алаяқтық."
+      "description_kk": "Банк/карта + қашықтан қолжетімділік — дерлік алаяқтық.",
+      "description_en": "Bank/card plus remote access — almost certainly a scam."
     },
     {
       "id": "combo_urgency_and_transfer",
       "category": "combo_high_risk",
-      "languages": ["ru", "kk", "both"],
+      "languages": ["ru", "kk", "en", "both"],
       "severity_weight": 0.55,
       "match": "all",
       "patterns": [
@@ -429,7 +449,8 @@
         "regex:(?:перевод|перевед|аударыңыз|аудару|карта|счёт|счет)"
       ],
       "description_ru": "Срочность + перевод денег.",
-      "description_kk": "Шұғылдық + ақша аудару."
+      "description_kk": "Шұғылдық + ақша аудару.",
+      "description_en": "Urgency plus a money transfer request."
     }
   ]
 }

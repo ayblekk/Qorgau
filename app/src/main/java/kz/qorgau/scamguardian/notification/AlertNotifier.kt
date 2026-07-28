@@ -13,24 +13,29 @@ import kz.qorgau.scamguardian.MainActivity
 import kz.qorgau.scamguardian.R
 import kz.qorgau.scamguardian.domain.model.AnalysisRecord
 import kz.qorgau.scamguardian.domain.model.RiskLevel
+import kz.qorgau.scamguardian.ui.util.LocaleHelper
 
 /**
  * Shows a high-priority local alert. Content never leaves the device.
  * Tone is intentionally urgent so the user stops before acting on a scam.
+ * Strings follow the user's selected app language (RU / KK / EN).
  */
 class AlertNotifier(
     context: Context,
 ) {
     private val appContext = context.applicationContext
 
+    private fun strings(): Context = LocaleHelper.localizedContext(appContext)
+
     fun ensureChannel() {
+        val res = strings()
         val manager = appContext.getSystemService(NotificationManager::class.java) ?: return
         val channel = NotificationChannel(
             CHANNEL_ID,
-            appContext.getString(R.string.alert_channel_name),
+            res.getString(R.string.alert_channel_name),
             NotificationManager.IMPORTANCE_HIGH,
         ).apply {
-            description = appContext.getString(R.string.alert_channel_description)
+            description = res.getString(R.string.alert_channel_description)
             enableVibration(true)
             vibrationPattern = longArrayOf(0, 400, 200, 400, 200, 600)
             enableLights(true)
@@ -45,6 +50,7 @@ class AlertNotifier(
 
     fun showScamAlert(record: AnalysisRecord) {
         ensureChannel()
+        val res = strings()
 
         val openApp = PendingIntent.getActivity(
             appContext,
@@ -57,14 +63,14 @@ class AlertNotifier(
         )
 
         val title = when (record.riskLevel) {
-            RiskLevel.HIGH -> appContext.getString(R.string.alert_title_high)
-            RiskLevel.SUSPICIOUS -> appContext.getString(R.string.alert_title_suspicious)
+            RiskLevel.HIGH -> res.getString(R.string.alert_title_high)
+            RiskLevel.SUSPICIOUS -> res.getString(R.string.alert_title_suspicious)
             RiskLevel.SAFE -> return
         }
 
         val shortBody = when (record.riskLevel) {
-            RiskLevel.HIGH -> appContext.getString(R.string.alert_short_high)
-            RiskLevel.SUSPICIOUS -> appContext.getString(R.string.alert_short_suspicious)
+            RiskLevel.HIGH -> res.getString(R.string.alert_short_high)
+            RiskLevel.SUSPICIOUS -> res.getString(R.string.alert_short_suspicious)
             RiskLevel.SAFE -> return
         }
 
@@ -74,12 +80,12 @@ class AlertNotifier(
             .take(140)
 
         val bigBody = when (record.riskLevel) {
-            RiskLevel.HIGH -> appContext.getString(
+            RiskLevel.HIGH -> res.getString(
                 R.string.alert_body_high,
                 record.explanation,
                 preview,
             )
-            RiskLevel.SUSPICIOUS -> appContext.getString(
+            RiskLevel.SUSPICIOUS -> res.getString(
                 R.string.alert_body_suspicious,
                 record.explanation,
                 preview,

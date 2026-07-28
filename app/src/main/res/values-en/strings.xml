@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Qorgau</string>
+    <string name="tagline">Local protection against scammers</string>
+    <string name="privacy_badge">On-device only</string>
+
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="history_title">History</string>
+    <string name="history_empty">All clear so far</string>
+    <string name="history_empty_hint">Suspicious messages will show up here</string>
+    <string name="history_source_sms">SMS</string>
+    <string name="history_source_whatsapp">WhatsApp</string>
+    <string name="history_source_telegram">Telegram</string>
+    <string name="history_source_other">Other</string>
+    <string name="history_source_manual">Manual check</string>
+    <string name="history_unknown_sender">Unknown sender</string>
+    <string name="history_details_title">Details</string>
+    <string name="history_message_label">Message</string>
+    <string name="history_matched_rules">Matched rules</string>
+
+    <string name="risk_high">Scam</string>
+    <string name="risk_suspicious">Suspicious</string>
+    <string name="risk_safe">Safe</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_protection">Protection</string>
+    <string name="settings_section_analysis">Analysis</string>
+    <string name="settings_section_data">Data</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_ru">Русский</string>
+    <string name="settings_language_kk">Қазақша</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_sensitivity">Sensitivity</string>
+    <string name="settings_sensitivity_low">Low</string>
+    <string name="settings_sensitivity_medium">Medium</string>
+    <string name="settings_sensitivity_high">High</string>
+    <string name="settings_sensitivity_hint">Higher means more alerts and more false positives</string>
+    <string name="settings_monitor_sms">SMS</string>
+    <string name="settings_monitor_sms_hint">Analyze SMS notifications</string>
+    <string name="settings_monitor_whatsapp">WhatsApp</string>
+    <string name="settings_monitor_whatsapp_hint">Analyze WhatsApp notifications</string>
+    <string name="settings_monitor_telegram">Telegram</string>
+    <string name="settings_monitor_telegram_hint">Analyze Telegram notifications</string>
+    <string name="settings_clear_history">Clear history</string>
+    <string name="settings_clear_history_confirm">Delete all analysis records on this device?</string>
+    <string name="settings_clear_history_done">History cleared</string>
+    <string name="settings_notification_access">Notification access</string>
+    <string name="settings_notification_access_hint">Needed to read SMS, WhatsApp, and Telegram locally</string>
+    <string name="settings_notification_access_on">Enabled</string>
+    <string name="settings_notification_access_off">Disabled — tap to open settings</string>
+    <string name="settings_post_notifications">Notification permission</string>
+    <string name="settings_post_notifications_hint">To show scam alerts</string>
+    <string name="settings_open_system">Open</string>
+
+    <string name="action_got_it">Got it</string>
+    <string name="action_mark_safe">Mark as safe</string>
+    <string name="action_false_positive">False positive</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Delete</string>
+    <string name="action_close">Close</string>
+    <string name="why_scam">Why is this a scam?</string>
+
+    <string name="notification_listener_label">Qorgau — message protection</string>
+    <string name="alert_channel_name">⚠️ Alert: scam</string>
+    <string name="alert_channel_description">Urgent local scam alerts. Data never leaves the device.</string>
+    <string name="alert_title_high">🚨 DANGER! This is a scam</string>
+    <string name="alert_title_suspicious">⚠️ Caution! Suspicious message</string>
+    <string name="alert_body_high">⛔ Do not send money or share codes!\n\n%1$s\n\n📩 “%2$s”</string>
+    <string name="alert_body_suspicious">⚡ Be careful — this may be a scam.\n\n%1$s\n\n📩 “%2$s”</string>
+    <string name="alert_short_high">⛔ Do not send money! Never share SMS codes!</string>
+    <string name="alert_short_suspicious">⚡ Do not open links or reply until you verify.</string>
+
+    <string name="time_just_now">just now</string>
+    <string name="time_minutes_ago">%d min ago</string>
+    <string name="time_hours_ago">%d h ago</string>
+    <string name="time_days_ago">%d d ago</string>
+
+    <string name="onboarding_title">Turn on protection</string>
+    <string name="onboarding_subtitle">Qorgau works only on your device. Permissions are needed to read SMS, WhatsApp, and Telegram notifications and warn you about scams.</string>
+    <string name="onboarding_step_alerts_title">App notifications</string>
+    <string name="onboarding_step_alerts_body">To show alerts when a message looks like a scam.</string>
+    <string name="onboarding_step_listener_title">Notification access</string>
+    <string name="onboarding_step_listener_body">Required. Enable Qorgau in the list of apps with notification access — without it, message capture does not work.</string>
+    <string name="onboarding_step_battery_title">Background activity</string>
+    <string name="onboarding_step_battery_body">Turn off battery optimization so the system does not stop protection.</string>
+    <string name="onboarding_action_allow">Allow</string>
+    <string name="onboarding_action_open_settings">Open settings</string>
+    <string name="onboarding_continue">Start protection</string>
+    <string name="onboarding_enable_required">Enable required</string>
+    <string name="onboarding_later">Continue without full protection</string>
+    <string name="onboarding_privacy_note">Message texts are not sent to the internet. Analysis runs only on this phone.</string>
+    <string name="banner_need_listener">No notification access — protection is inactive. Tap to enable.</string>
+    <string name="banner_need_alerts">No notification permission — alerts will not appear. Tap to fix.</string>
+    <string name="banner_need_permissions">Permissions are needed for protection. Tap to set up.</string>
+</resources>

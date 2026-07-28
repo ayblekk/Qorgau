@@ -11,12 +11,9 @@ internal object AppSettingsMapper {
         AppSettings(
             language = AppLanguage.fromStorage(entity.language),
             sensitivity = Sensitivity.fromStorage(entity.sensitivity),
-            rulesOnlyMode = entity.rulesOnlyMode,
             monitorSms = entity.monitorSms,
             monitorWhatsapp = entity.monitorWhatsapp,
             monitorTelegram = entity.monitorTelegram,
-            modelEnabled = entity.modelEnabled,
-            lastModelCheckEpochMs = entity.lastModelCheck,
         )
 
     fun toEntity(settings: AppSettings): AppSettingsEntity =
@@ -24,11 +21,8 @@ internal object AppSettingsMapper {
             id = AppSettingsEntity.DEFAULT_ID,
             language = settings.language.storageValue,
             sensitivity = settings.sensitivity.storageValue,
-            rulesOnlyMode = settings.rulesOnlyMode,
             monitorSms = settings.monitorSms,
             monitorWhatsapp = settings.monitorWhatsapp,
             monitorTelegram = settings.monitorTelegram,
-            modelEnabled = settings.modelEnabled,
-            lastModelCheck = settings.lastModelCheckEpochMs,
         )
 }

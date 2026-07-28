@@ -47,9 +47,10 @@ class DefaultRuleEngine(
             )
         }
 
+        // Always evaluate every rule. [language] only selects explanation copy,
+        // not which patterns run — scams arrive in RU/KK regardless of UI language.
         val matched = compiled.mapNotNull { compiledRule ->
             val rule = compiledRule.rule
-            if (!rule.appliesTo(language)) return@mapNotNull null
             if (!compiledRule.matches(normalized)) return@mapNotNull null
             rule
         }
@@ -73,7 +74,7 @@ class DefaultRuleEngine(
             else -> RiskLevel.SAFE
         }
 
-        // Ambiguous: some signal, but not clearly high — classifier may help later.
+        // Ambiguous: some signal, but not clearly high.
         val isUncertain = when (riskLevel) {
             RiskLevel.SUSPICIOUS -> true
             RiskLevel.SAFE -> totalWeight >= thresholds.uncertainFloor
@@ -95,11 +96,6 @@ class DefaultRuleEngine(
         )
     }
 
-    private fun ScamRule.appliesTo(language: AppLanguage): Boolean {
-        if (languages.isEmpty()) return true
-        return language in languages
-    }
-
     private fun buildExplanation(
         matched: List<ScamRule>,
         riskLevel: RiskLevel,
@@ -119,6 +115,11 @@ class DefaultRuleEngine(
                 RiskLevel.SUSPICIOUS -> "Хабарлама күдікті көрінеді."
                 RiskLevel.SAFE -> "Айқын алаяқтық белгілері табылмады."
             }
+            AppLanguage.ENGLISH -> when (riskLevel) {
+                RiskLevel.HIGH -> "This looks like a scam."
+                RiskLevel.SUSPICIOUS -> "This message looks suspicious."
+                RiskLevel.SAFE -> "No clear scam signs found."
+            }
         }
         return if (riskLevel == RiskLevel.SAFE) {
             header
@@ -131,6 +132,7 @@ class DefaultRuleEngine(
         when (language) {
             AppLanguage.RUSSIAN -> "Явных признаков скама не найдено."
             AppLanguage.KAZAKH -> "Айқын алаяқтық белгілері табылмады."
+            AppLanguage.ENGLISH -> "No clear scam signs found."
         }
 
     private data class CompiledRule(

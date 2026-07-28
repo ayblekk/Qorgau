@@ -10,6 +10,7 @@ Privacy-first, on-device Android scam detector for SMS / WhatsApp / Telegram (KZ
 - minSdk 29 / targetSdk 35
 - Package: `kz.qorgau.scamguardian`
 - Layers: UI → ViewModel/UseCase → Domain → Data
+- Detection: **rules-only** (no ML runtime)
 
 ## Project layout
 
@@ -20,15 +21,14 @@ app/src/main/java/kz/qorgau/scamguardian/
     model/            # RiskLevel, AnalysisRecord, AppSettings, ScamRule…
     repository/       # Interfaces
     rules/            # RuleEngine contract
-    classifier/       # ScamClassifier contract
   data/
     local/db/         # Room entities, DAOs, mappers, database
     repository/       # Room implementations
   ui/theme/           # DESIGN.md palette + typography
-  notification/       # (next) NotificationListenerService
+  notification/       # NotificationListenerService + pipeline
 ```
 
-## Room schema (v1)
+## Room schema (v2)
 
 | Table | Purpose |
 |-------|---------|
@@ -51,8 +51,8 @@ JDK 17+ required (Android Studio JBR works).
 2. ✅ Rule Engine (JSON rules + matching)
 3. ✅ NotificationListenerService + text extraction + thin pipeline
 4. ✅ Analyze → store → local alert
-5. ✅ Screens (History, Settings, Manual check) + ru/kk UI
-6. ✅ Capability detection + classifier stub + fail-safe fallback + 90-day prune
+5. ✅ Screens (History, Settings) + ru/kk/en UI
+6. ✅ 90-day history prune
 
 ### Notification capture
 
@@ -63,5 +63,5 @@ Flow: `ScamNotificationListenerService` → `NotificationTextExtractor` → `Mes
 ### Rule pack
 
 - Asset: `app/src/main/assets/rules/default_rules_v1.json` (auditable)
-- Engine: `DefaultRuleEngine` — rules first, pure evaluation, sensitivity thresholds
+- Engine: `DefaultRuleEngine` — pure evaluation, sensitivity thresholds
 - Patterns: substring or `regex:...`; match mode `any` / `all`

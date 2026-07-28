@@ -1,22 +1,22 @@
 # Architecture Document
 **Project:** ScamGuardian (Stage 1)  
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-07-28  
 
 ## 1. High-Level Overview
 
 ScamGuardian Stage 1 is a single-process Android application that runs entirely on the device.  
-There is **no backend**, no account system, and no network dependency for the core detection loop after the optional model has been downloaded once.
+There is **no backend**, no account system, no ML runtime, and no network dependency for the core detection loop.
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │                   Android App                       │
-│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐ │
-│  │ Notification │  │   Rule       │  │  On-device │ │
-│  │   Listener   │→ │   Engine     │→ │  Classifier│ │
-│  └──────────────┘  └──────────────┘  └───────────┘ │
-│           │                │               │        │
-│           └────────────────┼───────────────┘        │
+│  ┌──────────────┐  ┌──────────────┐                 │
+│  │ Notification │  │   Rule       │                 │
+│  │   Listener   │→ │   Engine     │                 │
+│  └──────────────┘  └──────────────┘                 │
+│           │                │                        │
+│           └────────────────┤                        │
 │                            ▼                        │
 │                   ┌─────────────────┐               │
 │                   │  Alert Manager  │               │
@@ -28,10 +28,9 @@ There is **no backend**, no account system, and no network dependency for the co
 ## 2. Design Principles
 
 - **Privacy by architecture** — analysis never leaves the device.
-- **Progressive enhancement** — pure rules work on the weakest phones; model is optional.
-- **Fail safe** — if the model fails to load or is too slow, fall back to rules only.
+- **Rules-first** — deterministic pattern matching is the only detection path in Stage 1.
 - **Auditable** — core detection logic and pattern lists are open and readable.
-- **Battery conscious** — rules run first; model is invoked only on ambiguous cases.
+- **Battery conscious** — keep the background path fast and light (rules only).
 
 ## 3. Major Components
 
@@ -52,23 +51,14 @@ There is **no backend**, no account system, and no network dependency for the co
 - Rules are stored as structured data (JSON or Kotlin objects) so they can be updated without code changes.
 - Each matched rule produces a human-readable reason.
 
-### 3.3 On-Device Classifier (Optional)
-- Small quantized language model or specialized text classifier.
-- Invoked only when the rule engine returns “uncertain”.
-- Input: cleaned message text + optional metadata (source app, time of day).
-- Output: risk score + short explanation.
-- Preferred runtimes: MediaPipe LLM Inference, ONNX Runtime, or llama.cpp Android bindings.
-- Model is downloaded once (or shipped with the app) and stored in app-private storage.
-
-### 3.4 Alert & History Manager
+### 3.3 Alert & History Manager
 - Creates high-priority notification when risk is high.
 - Stores analysis results in local Room / SQLite database.
 - Provides the History screen and “Mark as false positive” action (local only).
 
-### 3.5 Settings & Capability Detection
-- Detects device RAM and decides default mode (Rules-only / Rules + Light Model / Full).
-- User can override.
-- Language preference (Russian / Kazakh).
+### 3.4 Settings
+- Language preference (Russian / Kazakh / English).
+- Sensitivity (low / medium / high).
 - Per-app monitoring toggles.
 
 ## 4. Data Flow (Happy Path)
@@ -77,11 +67,10 @@ There is **no backend**, no account system, and no network dependency for the co
 2. Text is extracted and normalized (lowercase, remove extra whitespace, basic cleaning).
 3. Rule Engine evaluates →  
    - High confidence scam → create alert + store.  
-   - Clearly safe → store as safe (optional) or ignore.  
-   - Uncertain → pass to Classifier.
-4. Classifier returns score + explanation.
-5. Final decision is made → Alert Manager shows notification and writes to local DB.
-6. User can open the app to see full history and details.
+   - Suspicious → create alert (depending on sensitivity) + store.  
+   - Clearly safe → store as safe (optional) or ignore.
+4. Alert Manager shows notification (when needed) and writes to local DB.
+5. User can open the app to see full history and details.
 
 ## 5. Technology Choices (Recommended)
 
@@ -91,15 +80,12 @@ There is **no backend**, no account system, and no network dependency for the co
 | UI                 | Jetpack Compose                  | Modern, fast iteration, good accessibility |
 | Local DB           | Room                             | Simple, type-safe, perfect for history |
 | Background         | Foreground Service (when needed) + WorkManager for maintenance | Survive battery optimizations |
-| Model Runtime      | MediaPipe or ONNX Runtime        | Good Android support, relatively easy quantization |
 | Pattern Storage    | JSON assets + optional Room table | Easy to update and open-source |
-
-Alternative: Flutter if the developer prefers faster cross-platform UI, but native Kotlin is preferred for deep NotificationListener and future CallScreening work.
 
 ## 6. Security & Privacy Notes
 
 - `NotificationListenerService` requires explicit user enablement in system settings.
-- No `INTERNET` permission is required for core functionality (optional only for first model download).
+- No `INTERNET` permission is required for core functionality.
 - All message content stays in app-private storage.
 - No third-party analytics SDKs that could leak content.
 - Open-source the rule set and the decision logic so the community can audit it.
@@ -108,7 +94,7 @@ Alternative: Flutter if the developer prefers faster cross-platform UI, but nati
 
 - CallScreeningService can be added later without changing the core text pipeline.
 - New messaging apps can be added by simply extending the package filter list.
-- New languages = new rule packs + prompt templates.
+- New languages = new rule packs + explanation templates.
 - Community rule contributions can be imported as versioned JSON.
 
 ## 8. Risks & Mitigations
@@ -116,7 +102,6 @@ Alternative: Flutter if the developer prefers faster cross-platform UI, but nati
 | Risk | Mitigation |
 |------|------------|
 | NotificationListener killed by aggressive OEMs | Foreground service + battery optimization exemption request + clear user instructions |
-| Model too slow on low-end devices | Strict capability detection + pure-rules fallback |
 | High false positives | Conservative thresholds + easy “Mark as safe” + continuous local pattern tuning |
 | Google Play policy on NotificationListener | Clear privacy policy, open-source code, no data collection |
 

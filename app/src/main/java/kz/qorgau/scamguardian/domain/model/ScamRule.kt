@@ -7,6 +7,7 @@ data class ScamRule(
     val id: String,
     val descriptionRu: String,
     val descriptionKk: String,
+    val descriptionEn: String,
     val languages: Set<AppLanguage>,
     val severityWeight: Float,
     val patterns: List<String>,
@@ -22,6 +23,7 @@ data class ScamRule(
     fun descriptionFor(language: AppLanguage): String =
         when (language) {
             AppLanguage.KAZAKH -> descriptionKk
+            AppLanguage.ENGLISH -> descriptionEn.ifBlank { descriptionRu }
             AppLanguage.RUSSIAN -> descriptionRu
         }
 }

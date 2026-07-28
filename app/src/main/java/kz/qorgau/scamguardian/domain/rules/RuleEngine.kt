@@ -21,6 +21,6 @@ data class RuleEvaluationResult(
     val matchedRuleIds: List<String>,
     val explanation: String,
     val confidence: Float,
-    /** True when rules are inconclusive and classifier may help. */
+    /** True when rules are inconclusive (borderline weight). */
     val isUncertain: Boolean,
 )

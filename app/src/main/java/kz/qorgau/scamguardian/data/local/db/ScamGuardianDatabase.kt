@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kz.qorgau.scamguardian.data.local.db.dao.AnalysisLogDao
 import kz.qorgau.scamguardian.data.local.db.dao.AppSettingsDao
@@ -11,7 +12,7 @@ import kz.qorgau.scamguardian.data.local.db.entity.AnalysisLogEntity
 import kz.qorgau.scamguardian.data.local.db.entity.AppSettingsEntity
 
 /**
- * Local Room database (SCHEMA.md). Version 1 — first Stage 1 release.
+ * Local Room database (SCHEMA.md). Version 2 — rules-only settings (no model fields).
  * Message content never leaves the device.
  */
 @Database(
@@ -19,7 +20,7 @@ import kz.qorgau.scamguardian.data.local.db.entity.AppSettingsEntity
         AnalysisLogEntity::class,
         AppSettingsEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class ScamGuardianDatabase : RoomDatabase() {
@@ -30,6 +31,33 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME: String = "scamguardian.db"
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS app_settings_new (
+                        id INTEGER NOT NULL,
+                        language TEXT NOT NULL DEFAULT 'ru',
+                        sensitivity TEXT NOT NULL DEFAULT 'medium',
+                        monitor_sms INTEGER NOT NULL DEFAULT 1,
+                        monitor_whatsapp INTEGER NOT NULL DEFAULT 1,
+                        monitor_telegram INTEGER NOT NULL DEFAULT 1,
+                        PRIMARY KEY(id)
+                    )
+                    """.trimIndent(),
+                )
+                db.execSQL(
+                    """
+                    INSERT INTO app_settings_new (id, language, sensitivity, monitor_sms, monitor_whatsapp, monitor_telegram)
+                    SELECT id, language, sensitivity, monitor_sms, monitor_whatsapp, monitor_telegram
+                    FROM app_settings
+                    """.trimIndent(),
+                )
+                db.execSQL("DROP TABLE app_settings")
+                db.execSQL("ALTER TABLE app_settings_new RENAME TO app_settings")
+            }
+        }
 
         @Volatile
         private var instance: ScamGuardianDatabase? = null
@@ -46,6 +74,9 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
                 ScamGuardianDatabase::class.java,
                 DATABASE_NAME,
             )
+                .addMigrations(MIGRATION_1_2)
+                // Stage 1: prefer open over crash if a device has a broken/partial schema.
+                .fallbackToDestructiveMigration()
                 .addCallback(SeedCallback)
                 .build()
         }
@@ -60,10 +91,9 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
             db.execSQL(
                 """
                 INSERT OR IGNORE INTO app_settings (
-                    id, language, sensitivity, rules_only_mode,
-                    monitor_sms, monitor_whatsapp, monitor_telegram,
-                    model_enabled, last_model_check
-                ) VALUES (1, 'ru', 'medium', 0, 1, 1, 1, 1, 0)
+                    id, language, sensitivity,
+                    monitor_sms, monitor_whatsapp, monitor_telegram
+                ) VALUES (1, 'ru', 'medium', 1, 1, 1)
                 """.trimIndent(),
             )
         }

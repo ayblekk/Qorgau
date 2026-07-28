@@ -27,6 +27,8 @@ internal data class RuleDto(
     val descriptionRu: String,
     @SerialName("description_kk")
     val descriptionKk: String,
+    @SerialName("description_en")
+    val descriptionEn: String = "",
 )
 
 internal fun RulePackDto.toDomain(): RulePack =
@@ -42,6 +44,7 @@ internal fun RuleDto.toDomain(): ScamRule =
         id = id,
         descriptionRu = descriptionRu,
         descriptionKk = descriptionKk,
+        descriptionEn = descriptionEn,
         languages = languages.toLanguageSet(),
         severityWeight = severityWeight,
         patterns = patterns,
@@ -54,15 +57,15 @@ internal fun RuleDto.toDomain(): ScamRule =
 
 private fun List<String>.toLanguageSet(): Set<AppLanguage> {
     val tags = map { it.lowercase() }.toSet()
-    if (tags.contains("both") || tags.containsAll(listOf("ru", "kk"))) {
-        return setOf(AppLanguage.RUSSIAN, AppLanguage.KAZAKH)
+    if (tags.contains("both") || tags.contains("all")) {
+        return AppLanguage.entries.toSet()
     }
     return buildSet {
         if ("ru" in tags) add(AppLanguage.RUSSIAN)
         if ("kk" in tags) add(AppLanguage.KAZAKH)
+        if ("en" in tags) add(AppLanguage.ENGLISH)
         if (isEmpty()) {
-            add(AppLanguage.RUSSIAN)
-            add(AppLanguage.KAZAKH)
+            addAll(AppLanguage.entries)
         }
     }
 }

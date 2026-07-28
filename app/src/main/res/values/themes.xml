@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.ScamGuardian" parent="android:Theme.Material.Light.NoActionBar">
+    <!-- Must be AppCompat (or descendant): MainActivity extends AppCompatActivity. -->
+    <style name="Theme.ScamGuardian" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/guardian_blue</item>
+        <item name="colorPrimaryDark">@color/guardian_blue</item>
+        <item name="colorAccent">@color/soft_teal</item>
         <item name="android:statusBarColor">@color/guardian_blue</item>
         <item name="android:navigationBarColor">@color/background_light</item>
         <item name="android:windowBackground">@color/background_light</item>
