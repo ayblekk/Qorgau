@@ -49,10 +49,16 @@ JDK 17+ required (Android Studio JBR works).
 
 1. ✅ Project structure + Room schema
 2. ✅ Rule Engine (JSON rules + matching)
-3. NotificationListenerService
-4. Pipeline: notify → analyze → store → alert
+3. ✅ NotificationListenerService + text extraction + thin pipeline
+4. Pipeline polish / retention (partially done with analyze + alert)
 5. Screens (History, Settings, Manual check)
 6. i18n + capability detection + model fallback
+
+### Notification capture
+
+Enable in system settings: **Settings → Apps → Special access → Notification access → ScamGuardian**.
+
+Flow: `ScamNotificationListenerService` → `NotificationTextExtractor` → `MessageIngestor` → `AnalyzeIncomingMessageUseCase` (rules) → Room → local alert.
 
 ### Rule pack
 

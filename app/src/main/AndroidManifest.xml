@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Core path is offline. No INTERNET for Stage 1 core analysis (ARCHITECTURE.md §6). -->
+    <!-- Core analysis is offline. No INTERNET for Stage 1 core path (ARCHITECTURE.md §6). -->
+    <!-- POST_NOTIFICATIONS: show local scam alerts on Android 13+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".ScamGuardianApp"
@@ -25,7 +27,18 @@
             </intent-filter>
         </activity>
 
-        <!-- NotificationListener registered later (Stage 1 block 4). Stub kept out of first scaffold. -->
+        <service
+            android:name=".notification.ScamNotificationListenerService"
+            android:exported="true"
+            android:label="@string/notification_listener_label"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.notification.default_filter_types"
+                android:value="conversations|alerting" />
+        </service>
 
     </application>
 

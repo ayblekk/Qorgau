@@ -9,6 +9,10 @@ import kz.qorgau.scamguardian.domain.repository.AnalysisRepository
 import kz.qorgau.scamguardian.domain.repository.SettingsRepository
 import kz.qorgau.scamguardian.domain.rules.DefaultRuleEngine
 import kz.qorgau.scamguardian.domain.rules.RuleEngine
+import kz.qorgau.scamguardian.domain.usecase.AnalyzeIncomingMessageUseCase
+import kz.qorgau.scamguardian.notification.AlertNotifier
+import kz.qorgau.scamguardian.notification.MessageIngestor
+import kz.qorgau.scamguardian.notification.NotificationDeduper
 
 /**
  * Manual composition root (KISS — no Hilt for Stage 1).
@@ -32,12 +36,28 @@ class AppContainer(context: Context) {
 
     val rulePackLoader: RulePackLoader by lazy { RulePackLoader() }
 
-    /**
-     * Loads auditable JSON rules from assets once.
-     * Fail-soft: empty engine would be unsafe; we rethrow so app can surface the error.
-     */
     val ruleEngine: RuleEngine by lazy {
         val pack = rulePackLoader.loadFromAssets(appContext)
         DefaultRuleEngine(pack)
+    }
+
+    val analyzeIncomingMessage: AnalyzeIncomingMessageUseCase by lazy {
+        AnalyzeIncomingMessageUseCase(
+            ruleEngine = ruleEngine,
+            analysisRepository = analysisRepository,
+            settingsRepository = settingsRepository,
+        )
+    }
+
+    val alertNotifier: AlertNotifier by lazy {
+        AlertNotifier(appContext)
+    }
+
+    val messageIngestor: MessageIngestor by lazy {
+        MessageIngestor(
+            analyzeIncomingMessage = analyzeIncomingMessage,
+            alertNotifier = alertNotifier,
+            deduper = NotificationDeduper(),
+        )
     }
 }

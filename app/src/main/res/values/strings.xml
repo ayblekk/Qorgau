@@ -27,5 +27,13 @@
     <string name="action_mark_safe">Отметить как безопасное</string>
     <string name="action_false_positive">Ложное срабатывание</string>
     <string name="why_scam">Почему это скам?</string>
-    <string name="placeholder_scaffold">Stage 1: структура и Room готовы</string>
+    <string name="placeholder_scaffold">Stage 1: слушатель уведомлений подключён. Включите доступ в настройках системы.</string>
+    <string name="notification_listener_label">ScamGuardian — защита сообщений</string>
+    <string name="alert_channel_name">Предупреждения о скаме</string>
+    <string name="alert_channel_description">Локальные оповещения о подозрительных сообщениях. Данные не покидают устройство.</string>
+    <string name="alert_title_high">Возможный скам</string>
+    <string name="alert_title_suspicious">Подозрительное сообщение</string>
+    <string name="settings_notification_access">Доступ к уведомлениям</string>
+    <string name="settings_notification_access_hint">Нужен, чтобы читать SMS, WhatsApp и Telegram локально</string>
 </resources>
+

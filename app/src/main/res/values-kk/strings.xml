@@ -27,5 +27,13 @@
     <string name="action_mark_safe">Қауіпсіз деп белгілеу</string>
     <string name="action_false_positive">Жаңсақ іске қосылу</string>
     <string name="why_scam">Неге бұл алаяқтық?</string>
-    <string name="placeholder_scaffold">Stage 1: құрылым және Room дайын</string>
+    <string name="placeholder_scaffold">Stage 1: хабарлама тыңдағышы қосылды. Жүйе баптауларында рұқсат беріңіз.</string>
+    <string name="notification_listener_label">ScamGuardian — хабарлама қорғанысы</string>
+    <string name="alert_channel_name">Алаяқтық туралы ескертулер</string>
+    <string name="alert_channel_description">Күдікті хабарламалар туралы жергілікті ескертулер. Деректер құрылғыдан шықпайды.</string>
+    <string name="alert_title_high">Ықтимал алаяқтық</string>
+    <string name="alert_title_suspicious">Күдікті хабарлама</string>
+    <string name="settings_notification_access">Хабарламаларға қол жеткізу</string>
+    <string name="settings_notification_access_hint">SMS, WhatsApp және Telegram-ды жергілікті оқу үшін қажет</string>
 </resources>
+
