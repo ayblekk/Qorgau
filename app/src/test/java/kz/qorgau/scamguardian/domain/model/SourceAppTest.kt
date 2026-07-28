@@ -18,10 +18,41 @@ class SourceAppTest {
         assertEquals(SourceApp.WHATSAPP, SourceApp.fromPackageName("com.whatsapp.w4b"))
         assertEquals(SourceApp.TELEGRAM, SourceApp.fromPackageName("org.telegram.messenger.beta"))
         assertEquals(SourceApp.SMS, SourceApp.fromPackageName("com.miui.mms"))
+        assertEquals(SourceApp.SMS, SourceApp.fromPackageName("com.transsion.smartmessage"))
+        assertEquals(SourceApp.SMS, SourceApp.fromPackageName("com.oplus.mms"))
+        assertEquals(SourceApp.OTHER, SourceApp.fromPackageName("org.thoughtcrime.securesms"))
     }
 
     @Test
-    fun `unknown package is null`() {
-        assertNull(SourceApp.fromPackageName("com.instagram.android"))
+    fun `resolve accepts message category for unknown packages`() {
+        assertEquals(
+            SourceApp.OTHER,
+            SourceApp.resolve(
+                packageName = "com.weird.chat.app",
+                isMessageCategory = true,
+                hasMessagingStyle = false,
+            ),
+        )
+        assertEquals(
+            SourceApp.WHATSAPP,
+            SourceApp.resolve(
+                packageName = "com.whatsapp",
+                isMessageCategory = false,
+                hasMessagingStyle = false,
+            ),
+        )
+        assertNull(
+            SourceApp.resolve(
+                packageName = "com.android.systemui",
+                isMessageCategory = false,
+                hasMessagingStyle = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `unknown non messaging package is null`() {
+        assertNull(SourceApp.fromPackageName("com.android.systemui"))
+        assertNull(SourceApp.fromPackageName("com.spotify.music"))
     }
 }

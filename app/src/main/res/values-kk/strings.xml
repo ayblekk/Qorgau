@@ -5,7 +5,6 @@
     <string name="privacy_badge">Тек құрылғыда</string>
 
     <string name="nav_history">Тарих</string>
-    <string name="nav_check">Тексеру</string>
     <string name="nav_settings">Баптаулар</string>
 
     <string name="history_title">Тарих</string>
@@ -14,6 +13,7 @@
     <string name="history_source_sms">SMS</string>
     <string name="history_source_whatsapp">WhatsApp</string>
     <string name="history_source_telegram">Telegram</string>
+    <string name="history_source_other">Басқа</string>
     <string name="history_source_manual">Қолмен тексеру</string>
     <string name="history_unknown_sender">Белгісіз жіберуші</string>
     <string name="history_details_title">Толығырақ</string>
@@ -23,14 +23,6 @@
     <string name="risk_high">Алаяқтық</string>
     <string name="risk_suspicious">Күдікті</string>
     <string name="risk_safe">Қауіпсіз</string>
-
-    <string name="check_title">Мәтінді тексеру</string>
-    <string name="check_hint">Күдікті хабарламаны қойыңыз</string>
-    <string name="check_action">Тексеру</string>
-    <string name="check_result_title">Нәтиже</string>
-    <string name="check_clear">Тазалау</string>
-    <string name="check_analyzing">Тексерілуде…</string>
-    <string name="check_empty_error">Тексеру үшін мәтін енгізіңіз</string>
 
     <string name="settings_title">Баптаулар</string>
     <string name="settings_section_protection">Қорғаныс</string>
@@ -84,10 +76,14 @@
     <string name="why_scam">Неге бұл алаяқтық?</string>
 
     <string name="notification_listener_label">Qorgau — хабарлама қорғанысы</string>
-    <string name="alert_channel_name">Алаяқтық туралы ескертулер</string>
-    <string name="alert_channel_description">Күдікті хабарламалар туралы жергілікті ескертулер. Деректер құрылғыдан шықпайды.</string>
-    <string name="alert_title_high">Ықтимал алаяқтық</string>
-    <string name="alert_title_suspicious">Күдікті хабарлама</string>
+    <string name="alert_channel_name">⚠️ Дабыл: алаяқтық</string>
+    <string name="alert_channel_description">Алаяқтық туралы шұғыл жергілікті ескертулер. Деректер құрылғыдан шықпайды.</string>
+    <string name="alert_title_high">🚨 ҚАУІП! Бұл алаяқтық</string>
+    <string name="alert_title_suspicious">⚠️ Назар! Күдікті хабарлама</string>
+    <string name="alert_body_high">⛔ Ақша аудармаңыз және кодты айтпаңыз!\n\n%1$s\n\n📩 «%2$s»</string>
+    <string name="alert_body_suspicious">⚡ Сақ болыңыз — алдауға ұқсайды.\n\n%1$s\n\n📩 «%2$s»</string>
+    <string name="alert_short_high">⛔ Ақша аудармаңыз! SMS кодын ешкімге айтпаңыз!</string>
+    <string name="alert_short_suspicious">⚡ Сілтемеге өтпеңіз және жауап бермеңіз — алдымен тексеріңіз.</string>
 
     <string name="time_just_now">жаңа ғана</string>
     <string name="time_minutes_ago">%d мин бұрын</string>

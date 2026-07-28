@@ -70,14 +70,36 @@ class ScamNotificationListenerService : NotificationListenerService() {
 
         when (val result = extractor.extract(sbn, packageName)) {
             is NotificationTextExtractor.ExtractResult.Ignored -> {
-                if (DEBUG_LOG) {
-                    Log.d(TAG, "Ignored: ${result.reason} pkg=${sbn.packageName}")
+                // Always log drop reasons for messaging-ish packages to diagnose OEM gaps.
+                val pkg = sbn.packageName.orEmpty()
+                if (DEBUG_LOG || isInterestingPackage(pkg)) {
+                    Log.i(
+                        TAG,
+                        "Ignored: ${result.reason} pkg=$pkg cat=${sbn.notification?.category}",
+                    )
                 }
             }
             is NotificationTextExtractor.ExtractResult.Success -> {
-                activeIngestor.ingestFromNotification(result.message)
+                val msg = result.message
+                Log.i(
+                    TAG,
+                    "Captured source=${msg.sourceApp.storageValue} pkg=${msg.packageName} " +
+                        "len=${msg.text.length}",
+                )
+                activeIngestor.ingestFromNotification(msg)
             }
         }
+    }
+
+    private fun isInterestingPackage(pkg: String): Boolean {
+        val lower = pkg.lowercase()
+        return lower.contains("whatsapp") ||
+            lower.contains("telegram") ||
+            lower.contains("mms") ||
+            lower.contains("messag") ||
+            lower.contains("sms") ||
+            lower.contains("signal") ||
+            lower.contains("viber")
     }
 
     companion object {

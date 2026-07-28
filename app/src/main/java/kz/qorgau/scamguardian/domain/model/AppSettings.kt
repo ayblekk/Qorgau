@@ -18,6 +18,8 @@ data class AppSettings(
             SourceApp.SMS -> monitorSms
             SourceApp.WHATSAPP -> monitorWhatsapp
             SourceApp.TELEGRAM -> monitorTelegram
+            // Other messengers always monitored when at least one channel is on.
+            SourceApp.OTHER -> monitorSms || monitorWhatsapp || monitorTelegram
             SourceApp.MANUAL -> true
         }
 }

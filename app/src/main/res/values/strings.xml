@@ -5,7 +5,6 @@
     <string name="privacy_badge">Только на устройстве</string>
 
     <string name="nav_history">История</string>
-    <string name="nav_check">Проверка</string>
     <string name="nav_settings">Настройки</string>
 
     <string name="history_title">История</string>
@@ -14,6 +13,7 @@
     <string name="history_source_sms">SMS</string>
     <string name="history_source_whatsapp">WhatsApp</string>
     <string name="history_source_telegram">Telegram</string>
+    <string name="history_source_other">Другое</string>
     <string name="history_source_manual">Ручная проверка</string>
     <string name="history_unknown_sender">Неизвестный отправитель</string>
     <string name="history_details_title">Детали</string>
@@ -23,14 +23,6 @@
     <string name="risk_high">Скам</string>
     <string name="risk_suspicious">Подозрительно</string>
     <string name="risk_safe">Безопасно</string>
-
-    <string name="check_title">Проверить текст</string>
-    <string name="check_hint">Вставьте подозрительное сообщение</string>
-    <string name="check_action">Проверить</string>
-    <string name="check_result_title">Результат</string>
-    <string name="check_clear">Очистить</string>
-    <string name="check_analyzing">Проверяем…</string>
-    <string name="check_empty_error">Введите текст для проверки</string>
 
     <string name="settings_title">Настройки</string>
     <string name="settings_section_protection">Защита</string>
@@ -84,10 +76,14 @@
     <string name="why_scam">Почему это скам?</string>
 
     <string name="notification_listener_label">Qorgau — защита сообщений</string>
-    <string name="alert_channel_name">Предупреждения о скаме</string>
-    <string name="alert_channel_description">Локальные оповещения о подозрительных сообщениях. Данные не покидают устройство.</string>
-    <string name="alert_title_high">Возможный скам</string>
-    <string name="alert_title_suspicious">Подозрительное сообщение</string>
+    <string name="alert_channel_name">⚠️ Тревога: скам</string>
+    <string name="alert_channel_description">Срочные локальные оповещения о мошенничестве. Данные не покидают устройство.</string>
+    <string name="alert_title_high">🚨 ОПАСНО! Это скам</string>
+    <string name="alert_title_suspicious">⚠️ Внимание! Подозрительно</string>
+    <string name="alert_body_high">⛔ Не переводите деньги и не сообщайте коды!\n\n%1$s\n\n📩 «%2$s»</string>
+    <string name="alert_body_suspicious">⚡ Будьте осторожны — похоже на обман.\n\n%1$s\n\n📩 «%2$s»</string>
+    <string name="alert_short_high">⛔ Не переводите деньги! Не сообщайте коды из SMS!</string>
+    <string name="alert_short_suspicious">⚡ Не переходите по ссылкам и не отвечайте, пока не проверите.</string>
 
     <string name="time_just_now">только что</string>
     <string name="time_minutes_ago">%d мин назад</string>

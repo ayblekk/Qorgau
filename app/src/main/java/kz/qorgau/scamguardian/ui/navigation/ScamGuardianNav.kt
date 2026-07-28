@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,8 +32,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kz.qorgau.scamguardian.R
 import kz.qorgau.scamguardian.ui.AppViewModelFactory
-import kz.qorgau.scamguardian.ui.check.CheckScreen
-import kz.qorgau.scamguardian.ui.check.CheckViewModel
 import kz.qorgau.scamguardian.ui.history.HistoryScreen
 import kz.qorgau.scamguardian.ui.history.HistoryViewModel
 import kz.qorgau.scamguardian.ui.permissions.PermissionBanner
@@ -50,7 +47,6 @@ private enum class TopLevelDestination(
     val icon: ImageVector,
 ) {
     History("history", R.string.nav_history, Icons.Outlined.History),
-    Check("check", R.string.nav_check, Icons.Outlined.Search),
     Settings("settings", R.string.nav_settings, Icons.Outlined.Settings),
 }
 
@@ -152,10 +148,6 @@ fun ScamGuardianApp(
                 composable(TopLevelDestination.History.route) {
                     val vm: HistoryViewModel = viewModel(factory = viewModelFactory)
                     HistoryScreen(viewModel = vm)
-                }
-                composable(TopLevelDestination.Check.route) {
-                    val vm: CheckViewModel = viewModel(factory = viewModelFactory)
-                    CheckScreen(viewModel = vm)
                 }
                 composable(TopLevelDestination.Settings.route) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory)

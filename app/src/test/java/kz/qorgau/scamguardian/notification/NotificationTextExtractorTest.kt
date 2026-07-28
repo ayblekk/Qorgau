@@ -39,6 +39,24 @@ class NotificationTextExtractorTest {
     }
 
     @Test
+    fun `prefers messaging style over short text label`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.WHATSAPP,
+            packageName = "com.whatsapp",
+            title = "Марлен",
+            text = "Марлен",
+            bigText = null,
+            messagingLines = listOf(
+                "Здравствуйте. Это служба безопасности банка. Сообщите код из SMS",
+            ),
+            receivedAtEpochMs = 1L,
+        )
+        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
+        assertTrue(msg.text.contains("служба безопасности"))
+        assertTrue(msg.text.contains("код"))
+    }
+
+    @Test
     fun `strips whatsapp name prefix when matches title`() {
         val cleaned = NotificationTextExtractor.cleanupBody(
             body = "Alice: Привет, переведи мне пожалуйста",
@@ -46,6 +64,16 @@ class NotificationTextExtractorTest {
             sourceApp = SourceApp.WHATSAPP,
         )
         assertEquals("Привет, переведи мне пожалуйста", cleaned)
+    }
+
+    @Test
+    fun `strips invisible ltr marks used by whatsapp`() {
+        val cleaned = NotificationTextExtractor.cleanupBody(
+            body = "\u200EМарлен: код из SMS",
+            title = "Марлен",
+            sourceApp = SourceApp.WHATSAPP,
+        )
+        assertEquals("код из SMS", cleaned)
     }
 
     @Test
@@ -125,5 +153,37 @@ class NotificationTextExtractorTest {
         )
         val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
         assertTrue(msg.text.contains("AnyDesk"))
+    }
+
+    @Test
+    fun `ignores useless whatsapp summary labels`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.WHATSAPP,
+            packageName = "com.whatsapp",
+            title = "WhatsApp",
+            text = "5 new messages",
+            bigText = null,
+            isGroupSummary = true,
+            receivedAtEpochMs = 1L,
+        )
+        assertEquals(
+            NotificationTextExtractor.IgnoreReason.USELESS_SUMMARY,
+            (result as NotificationTextExtractor.ExtractResult.Ignored).reason,
+        )
+    }
+
+    @Test
+    fun `uses ticker as fallback body`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.SMS,
+            packageName = "com.android.mms",
+            title = "Bank",
+            text = null,
+            bigText = null,
+            ticker = "Kaspi: подтвердите перевод 10000",
+            receivedAtEpochMs = 1L,
+        )
+        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
+        assertTrue(msg.text.contains("подтвердите") || msg.text.contains("перевод"))
     }
 }
