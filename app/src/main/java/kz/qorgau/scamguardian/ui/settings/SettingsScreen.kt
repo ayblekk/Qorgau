@@ -180,6 +180,41 @@ fun SettingsScreen(
                 checked = settings.monitorTelegram,
                 onCheckedChange = viewModel::setMonitorTelegram,
             )
+            HorizontalDivider()
+            SettingsToggleRow(
+                title = stringResource(R.string.settings_monitor_instagram),
+                subtitle = stringResource(R.string.settings_monitor_instagram_hint),
+                checked = settings.monitorInstagram,
+                onCheckedChange = viewModel::setMonitorInstagram,
+            )
+            HorizontalDivider()
+            SettingsToggleRow(
+                title = stringResource(R.string.settings_monitor_messenger),
+                subtitle = stringResource(R.string.settings_monitor_messenger_hint),
+                checked = settings.monitorMessenger,
+                onCheckedChange = viewModel::setMonitorMessenger,
+            )
+            HorizontalDivider()
+            SettingsToggleRow(
+                title = stringResource(R.string.settings_monitor_viber),
+                subtitle = stringResource(R.string.settings_monitor_viber_hint),
+                checked = settings.monitorViber,
+                onCheckedChange = viewModel::setMonitorViber,
+            )
+            HorizontalDivider()
+            SettingsToggleRow(
+                title = stringResource(R.string.settings_monitor_vk),
+                subtitle = stringResource(R.string.settings_monitor_vk_hint),
+                checked = settings.monitorVk,
+                onCheckedChange = viewModel::setMonitorVk,
+            )
+            HorizontalDivider()
+            SettingsToggleRow(
+                title = stringResource(R.string.settings_monitor_ok),
+                subtitle = stringResource(R.string.settings_monitor_ok_hint),
+                checked = settings.monitorOk,
+                onCheckedChange = viewModel::setMonitorOk,
+            )
         }
 
         SectionHeader(stringResource(R.string.settings_section_analysis))

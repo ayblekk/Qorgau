@@ -283,6 +283,11 @@ private fun sourceLabel(source: SourceApp): String =
         SourceApp.SMS -> stringResource(R.string.history_source_sms)
         SourceApp.WHATSAPP -> stringResource(R.string.history_source_whatsapp)
         SourceApp.TELEGRAM -> stringResource(R.string.history_source_telegram)
+        SourceApp.INSTAGRAM -> stringResource(R.string.history_source_instagram)
+        SourceApp.MESSENGER -> stringResource(R.string.history_source_messenger)
+        SourceApp.VIBER -> stringResource(R.string.history_source_viber)
+        SourceApp.VK -> stringResource(R.string.history_source_vk)
+        SourceApp.OK -> stringResource(R.string.history_source_ok)
         SourceApp.OTHER -> stringResource(R.string.history_source_other)
         SourceApp.MANUAL -> stringResource(R.string.history_source_manual)
     }
@@ -292,6 +297,11 @@ private fun sourceIcon(source: SourceApp) =
         SourceApp.SMS -> Icons.Outlined.Sms
         SourceApp.WHATSAPP -> Icons.AutoMirrored.Outlined.Chat
         SourceApp.TELEGRAM -> Icons.AutoMirrored.Outlined.Send
+        SourceApp.INSTAGRAM -> Icons.AutoMirrored.Outlined.Chat
+        SourceApp.MESSENGER -> Icons.AutoMirrored.Outlined.Chat
+        SourceApp.VIBER -> Icons.AutoMirrored.Outlined.Chat
+        SourceApp.VK -> Icons.AutoMirrored.Outlined.Chat
+        SourceApp.OK -> Icons.AutoMirrored.Outlined.Chat
         SourceApp.OTHER -> Icons.AutoMirrored.Outlined.Chat
         SourceApp.MANUAL -> Icons.Outlined.EditNote
     }

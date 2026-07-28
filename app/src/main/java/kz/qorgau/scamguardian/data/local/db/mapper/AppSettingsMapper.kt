@@ -14,6 +14,11 @@ internal object AppSettingsMapper {
             monitorSms = entity.monitorSms,
             monitorWhatsapp = entity.monitorWhatsapp,
             monitorTelegram = entity.monitorTelegram,
+            monitorInstagram = entity.monitorInstagram,
+            monitorMessenger = entity.monitorMessenger,
+            monitorViber = entity.monitorViber,
+            monitorVk = entity.monitorVk,
+            monitorOk = entity.monitorOk,
         )
 
     fun toEntity(settings: AppSettings): AppSettingsEntity =
@@ -24,5 +29,10 @@ internal object AppSettingsMapper {
             monitorSms = settings.monitorSms,
             monitorWhatsapp = settings.monitorWhatsapp,
             monitorTelegram = settings.monitorTelegram,
+            monitorInstagram = settings.monitorInstagram,
+            monitorMessenger = settings.monitorMessenger,
+            monitorViber = settings.monitorViber,
+            monitorVk = settings.monitorVk,
+            monitorOk = settings.monitorOk,
         )
 }

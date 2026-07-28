@@ -69,6 +69,26 @@ class SettingsViewModel(
         update { it.copy(monitorTelegram = enabled) }
     }
 
+    fun setMonitorInstagram(enabled: Boolean) {
+        update { it.copy(monitorInstagram = enabled) }
+    }
+
+    fun setMonitorMessenger(enabled: Boolean) {
+        update { it.copy(monitorMessenger = enabled) }
+    }
+
+    fun setMonitorViber(enabled: Boolean) {
+        update { it.copy(monitorViber = enabled) }
+    }
+
+    fun setMonitorVk(enabled: Boolean) {
+        update { it.copy(monitorVk = enabled) }
+    }
+
+    fun setMonitorOk(enabled: Boolean) {
+        update { it.copy(monitorOk = enabled) }
+    }
+
     fun clearHistory() {
         viewModelScope.launch {
             analysisRepository.clearAll()

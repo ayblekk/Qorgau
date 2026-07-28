@@ -14,8 +14,8 @@ android {
         applicationId = "kz.qorgau.scamguardian"
         minSdk = 29
         targetSdk = 35
-        versionCode = 4
-        versionName = "3.0.0"
+        versionCode = 5
+        versionName = "5.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

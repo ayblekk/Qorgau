@@ -11,6 +11,13 @@ class SourceAppTest {
         assertEquals(SourceApp.SMS, SourceApp.fromPackageName("com.google.android.apps.messaging"))
         assertEquals(SourceApp.WHATSAPP, SourceApp.fromPackageName("com.whatsapp"))
         assertEquals(SourceApp.TELEGRAM, SourceApp.fromPackageName("org.telegram.messenger"))
+        assertEquals(SourceApp.INSTAGRAM, SourceApp.fromPackageName("com.instagram.android"))
+        assertEquals(SourceApp.MESSENGER, SourceApp.fromPackageName("com.facebook.orca"))
+        assertEquals(SourceApp.MESSENGER, SourceApp.fromPackageName("com.facebook.mlite"))
+        assertEquals(SourceApp.VIBER, SourceApp.fromPackageName("com.viber.voip"))
+        assertEquals(SourceApp.VK, SourceApp.fromPackageName("com.vkontakte.android"))
+        assertEquals(SourceApp.VK, SourceApp.fromPackageName("com.vk.im"))
+        assertEquals(SourceApp.OK, SourceApp.fromPackageName("ru.ok.android"))
     }
 
     @Test
@@ -21,6 +28,8 @@ class SourceAppTest {
         assertEquals(SourceApp.SMS, SourceApp.fromPackageName("com.transsion.smartmessage"))
         assertEquals(SourceApp.SMS, SourceApp.fromPackageName("com.oplus.mms"))
         assertEquals(SourceApp.OTHER, SourceApp.fromPackageName("org.thoughtcrime.securesms"))
+        assertEquals(SourceApp.INSTAGRAM, SourceApp.fromPackageName("com.instagram.lite"))
+        assertEquals(SourceApp.VIBER, SourceApp.fromPackageName("com.viber.voip.lite"))
     }
 
     @Test
@@ -37,6 +46,14 @@ class SourceAppTest {
             SourceApp.WHATSAPP,
             SourceApp.resolve(
                 packageName = "com.whatsapp",
+                isMessageCategory = false,
+                hasMessagingStyle = false,
+            ),
+        )
+        assertEquals(
+            SourceApp.INSTAGRAM,
+            SourceApp.resolve(
+                packageName = "com.instagram.android",
                 isMessageCategory = false,
                 hasMessagingStyle = false,
             ),

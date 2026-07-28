@@ -82,28 +82,52 @@ enum class SourceApp(
             "org.telegram.messenger.web.huawei",
         ),
     ),
+    INSTAGRAM(
+        storageValue = "instagram",
+        packageNames = setOf(
+            "com.instagram.android",
+        ),
+    ),
+    MESSENGER(
+        storageValue = "messenger",
+        packageNames = setOf(
+            "com.facebook.orca",
+            "com.facebook.mlite",
+        ),
+    ),
+    VIBER(
+        storageValue = "viber",
+        packageNames = setOf(
+            "com.viber.voip",
+        ),
+    ),
+    VK(
+        storageValue = "vk",
+        packageNames = setOf(
+            "com.vkontakte.android",
+            "com.vk.im",
+        ),
+    ),
+    OK(
+        storageValue = "ok",
+        packageNames = setOf(
+            "ru.ok.android",
+        ),
+    ),
     /** Other chat / social messengers captured via category or MessagingStyle. */
     OTHER(
         storageValue = "other",
         packageNames = setOf(
             "org.thoughtcrime.securesms", // Signal
-            "com.viber.voip",
-            "com.instagram.android",
-            "com.facebook.orca",
-            "com.facebook.mlite",
             "com.skype.raider",
             "com.discord",
             "jp.naver.line.android",
             "com.snapchat.android",
             "com.tencent.mm", // WeChat
-            "com.vkontakte.android",
-            "com.vk.im",
-            "org.thoughtcrime.securesms",
             "im.vector.app",
             "com.bsb.hike",
             "com.imo.android.imoim",
             "com.truecaller",
-            "ru.ok.android",
             "com.icq.mobile.client",
             "com.google.android.apps.dynamite", // Google Chat
             "com.google.android.apps.hangouts",
@@ -125,6 +149,16 @@ enum class SourceApp(
                 lower.contains("telegram") ||
                     lower.contains("challegram") ||
                     lower.contains("nekox") -> TELEGRAM
+                lower.contains("instagram") -> INSTAGRAM
+                lower.contains("facebook.orca") ||
+                    lower.contains("facebook.mlite") ||
+                    lower.contains("messenger") && lower.contains("facebook") -> MESSENGER
+                lower.contains("viber") -> VIBER
+                lower.contains("vkontakte") ||
+                    lower.startsWith("com.vk.") ||
+                    lower.contains(".vk.") -> VK
+                lower.contains("ru.ok") ||
+                    lower.contains("odnoklassniki") -> OK
                 isLikelySmsPackage(lower) -> SMS
                 isLikelyMessengerPackage(lower) -> OTHER
                 else -> null
@@ -168,8 +202,6 @@ enum class SourceApp(
 
         private fun isLikelyMessengerPackage(lower: String): Boolean {
             return lower.contains("signal") ||
-                lower.contains("viber") ||
-                lower.contains("messenger") ||
                 lower.contains("imessage") ||
                 lower.contains("wechat") ||
                 lower.contains("line.android") ||

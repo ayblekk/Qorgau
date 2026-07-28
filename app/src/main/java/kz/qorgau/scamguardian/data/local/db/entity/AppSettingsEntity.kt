@@ -27,6 +27,21 @@ data class AppSettingsEntity(
 
     @ColumnInfo(name = "monitor_telegram", defaultValue = "1")
     val monitorTelegram: Boolean = true,
+
+    @ColumnInfo(name = "monitor_instagram", defaultValue = "1")
+    val monitorInstagram: Boolean = true,
+
+    @ColumnInfo(name = "monitor_messenger", defaultValue = "1")
+    val monitorMessenger: Boolean = true,
+
+    @ColumnInfo(name = "monitor_viber", defaultValue = "1")
+    val monitorViber: Boolean = true,
+
+    @ColumnInfo(name = "monitor_vk", defaultValue = "1")
+    val monitorVk: Boolean = true,
+
+    @ColumnInfo(name = "monitor_ok", defaultValue = "1")
+    val monitorOk: Boolean = true,
 ) {
     companion object {
         const val DEFAULT_ID: Int = 1

@@ -12,7 +12,7 @@ import kz.qorgau.scamguardian.data.local.db.entity.AnalysisLogEntity
 import kz.qorgau.scamguardian.data.local.db.entity.AppSettingsEntity
 
 /**
- * Local Room database (SCHEMA.md). Version 2 — rules-only settings (no model fields).
+ * Local Room database (SCHEMA.md). Version 3 — extra messenger monitor toggles.
  * Message content never leaves the device.
  */
 @Database(
@@ -20,7 +20,7 @@ import kz.qorgau.scamguardian.data.local.db.entity.AppSettingsEntity
         AnalysisLogEntity::class,
         AppSettingsEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class ScamGuardianDatabase : RoomDatabase() {
@@ -59,6 +59,26 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE app_settings ADD COLUMN monitor_instagram INTEGER NOT NULL DEFAULT 1",
+                )
+                db.execSQL(
+                    "ALTER TABLE app_settings ADD COLUMN monitor_messenger INTEGER NOT NULL DEFAULT 1",
+                )
+                db.execSQL(
+                    "ALTER TABLE app_settings ADD COLUMN monitor_viber INTEGER NOT NULL DEFAULT 1",
+                )
+                db.execSQL(
+                    "ALTER TABLE app_settings ADD COLUMN monitor_vk INTEGER NOT NULL DEFAULT 1",
+                )
+                db.execSQL(
+                    "ALTER TABLE app_settings ADD COLUMN monitor_ok INTEGER NOT NULL DEFAULT 1",
+                )
+            }
+        }
+
         @Volatile
         private var instance: ScamGuardianDatabase? = null
 
@@ -74,7 +94,7 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
                 ScamGuardianDatabase::class.java,
                 DATABASE_NAME,
             )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 // Stage 1: prefer open over crash if a device has a broken/partial schema.
                 .fallbackToDestructiveMigration()
                 .addCallback(SeedCallback)
@@ -92,8 +112,10 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
                 """
                 INSERT OR IGNORE INTO app_settings (
                     id, language, sensitivity,
-                    monitor_sms, monitor_whatsapp, monitor_telegram
-                ) VALUES (1, 'ru', 'medium', 1, 1, 1)
+                    monitor_sms, monitor_whatsapp, monitor_telegram,
+                    monitor_instagram, monitor_messenger, monitor_viber,
+                    monitor_vk, monitor_ok
+                ) VALUES (1, 'ru', 'medium', 1, 1, 1, 1, 1, 1, 1, 1)
                 """.trimIndent(),
             )
         }
