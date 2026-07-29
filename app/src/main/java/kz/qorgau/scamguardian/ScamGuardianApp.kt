@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kz.qorgau.scamguardian.di.AppContainer
+import kz.qorgau.scamguardian.notification.NotificationListenerController
 import kz.qorgau.scamguardian.ui.util.LocaleHelper
 
 class ScamGuardianApp : Application() {
@@ -20,6 +21,9 @@ class ScamGuardianApp : Application() {
         // After super: AppCompat is ready; restore UI language if we saved one.
         LocaleHelper.applyStoredLanguage(this)
         container = AppContainer(this)
+
+        // Early rebind — do not wait for Activity (NLS can stay dead after update).
+        NotificationListenerController.ensureBound(this)
 
         appScope.launch {
             runCatching {

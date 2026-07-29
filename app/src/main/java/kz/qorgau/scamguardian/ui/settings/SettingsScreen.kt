@@ -52,6 +52,7 @@ import kz.qorgau.scamguardian.domain.model.AppLanguage
 import kz.qorgau.scamguardian.domain.model.Sensitivity
 import kz.qorgau.scamguardian.ui.components.PrivacyBadge
 import kz.qorgau.scamguardian.ui.components.SectionHeader
+import kz.qorgau.scamguardian.notification.NotificationListenerController
 import kz.qorgau.scamguardian.ui.util.appNotificationSettingsIntent
 import kz.qorgau.scamguardian.ui.util.isNotificationListenerEnabled
 import kz.qorgau.scamguardian.ui.util.notificationListenerSettingsIntent
@@ -68,6 +69,9 @@ fun SettingsScreen(
     var listenerEnabled by remember {
         mutableStateOf(isNotificationListenerEnabled(context))
     }
+    var listenerConnected by remember {
+        mutableStateOf(NotificationListenerController.isConnected)
+    }
     var showClearConfirm by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -82,7 +86,9 @@ fun SettingsScreen(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 listenerEnabled = isNotificationListenerEnabled(context)
+                listenerConnected = NotificationListenerController.isConnected
                 notificationsGranted = arePostNotificationsGranted(context)
+                NotificationListenerController.ensureBound(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -140,6 +146,31 @@ fun SettingsScreen(
                 },
                 onClick = {
                     context.startActivity(notificationListenerSettingsIntent())
+                },
+            )
+            HorizontalDivider()
+            val statusText = when {
+                !listenerEnabled -> stringResource(R.string.settings_listener_status_no_access)
+                listenerConnected -> stringResource(R.string.settings_listener_status_connected)
+                else -> stringResource(R.string.settings_listener_status_disconnected)
+            }
+            val statusColor = when {
+                !listenerEnabled -> MaterialTheme.colorScheme.error
+                listenerConnected -> MaterialTheme.colorScheme.primary
+                else -> MaterialTheme.colorScheme.error
+            }
+            SettingsNavRow(
+                title = stringResource(R.string.settings_listener_status),
+                subtitle = statusText,
+                subtitleColor = statusColor,
+                onClick = {
+                    NotificationListenerController.ensureBound(context, forceBounce = true)
+                    listenerConnected = NotificationListenerController.isConnected
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.settings_listener_reconnect),
+                        Toast.LENGTH_SHORT,
+                    ).show()
                 },
             )
             HorizontalDivider()

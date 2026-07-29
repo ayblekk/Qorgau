@@ -7,10 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kz.qorgau.scamguardian.notification.NotificationListenerController
 import kz.qorgau.scamguardian.ui.AppViewModelFactory
 import kz.qorgau.scamguardian.ui.navigation.ScamGuardianApp
 import kz.qorgau.scamguardian.ui.theme.ScamGuardianTheme
@@ -46,5 +49,17 @@ class MainActivity : AppCompatActivity() {
             }
             LocaleHelper.syncFromSettings(language, this@MainActivity)
         }
+
+        // Keep NLS binder alive: OEMs often leave the toggle ON while the service is dead.
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                NotificationListenerController.ensureBound(this@MainActivity)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        NotificationListenerController.ensureBound(this)
     }
 }

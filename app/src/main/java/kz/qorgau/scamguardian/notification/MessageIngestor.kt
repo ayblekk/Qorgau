@@ -20,17 +20,38 @@ class MessageIngestor(
 ) {
 
     fun ingestFromNotification(message: IncomingMessage) {
-        if (!deduper.shouldProcess(message)) return
+        if (!deduper.shouldProcess(message)) {
+            Log.i(
+                TAG,
+                "Dedup skip source=${message.sourceApp.storageValue} pkg=${message.packageName}",
+            )
+            return
+        }
 
         scope.launch {
             runCatching {
-                val outcome = analyzeIncomingMessage.execute(message) ?: return@runCatching
+                val outcome = analyzeIncomingMessage.execute(message)
+                if (outcome == null) {
+                    Log.i(
+                        TAG,
+                        "Monitor off for source=${message.sourceApp.storageValue}",
+                    )
+                    return@runCatching
+                }
+                Log.i(
+                    TAG,
+                    "Stored id=${outcome.record.id} risk=${outcome.record.riskLevel.storageValue} " +
+                        "source=${outcome.record.sourceApp.storageValue} alert=${outcome.shouldAlert}",
+                )
                 if (outcome.shouldAlert) {
                     alertNotifier.showScamAlert(outcome.record)
                 }
             }.onFailure { error ->
                 // Never log message content (RULES.md §10).
-                Log.w(TAG, "Analysis failed: ${error.javaClass.simpleName}")
+                Log.e(
+                    TAG,
+                    "Analysis failed: ${error.javaClass.simpleName}: ${error.message}",
+                )
             }
         }
     }

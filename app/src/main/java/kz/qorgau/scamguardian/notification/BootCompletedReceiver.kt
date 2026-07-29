@@ -1,15 +1,13 @@
 package kz.qorgau.scamguardian.notification
 
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.service.notification.NotificationListenerService
 import android.util.Log
 
 /**
- * After reboot / update, ask the system to rebind the notification listener.
+ * After reboot / update, force the notification listener to rebind.
+ * Package replace is the usual moment NLS sticks in "enabled but dead".
  */
 class BootCompletedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
@@ -20,13 +18,10 @@ class BootCompletedReceiver : BroadcastReceiver() {
         ) {
             return
         }
-        val component = ComponentName(context, ScamNotificationListenerService::class.java)
-        runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                NotificationListenerService.requestRebind(component)
-                Log.i(TAG, "Requested NLS rebind after $action")
-            }
-        }
+        // After APK update, bounce the component so OEM re-attaches the binder.
+        val forceBounce = action == Intent.ACTION_MY_PACKAGE_REPLACED
+        NotificationListenerController.ensureBound(context, forceBounce = forceBounce)
+        Log.i(TAG, "ensureBound after $action forceBounce=$forceBounce")
     }
 
     companion object {

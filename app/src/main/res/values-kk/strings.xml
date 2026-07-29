@@ -9,7 +9,16 @@
 
     <string name="history_title">Тарих</string>
     <string name="history_empty">Әзірге бәрі таза</string>
-    <string name="history_empty_hint">Күдікті хабарламалар осында пайда болады</string>
+    <string name="history_empty_hint">Тексерілген хабарламалар (қауіпсіздерді қоса) осында пайда болады</string>
+    <string name="history_empty_no_access">Хабарламаларға қолжетімділік жоқ</string>
+    <string name="history_empty_no_access_hint">Баптаулар → Хабарламаларға қолжетімділік ашып, Qorgau-ды қосыңыз</string>
+    <string name="history_empty_disconnected">Ұстау қосылмаған</string>
+    <string name="history_empty_disconnected_hint">Рұқсат бар, бірақ қызмет байланыспаған. Баптаулар → Хабарламаларға қолжетімділік: Qorgau-ды өшіріп, қайта қосыңыз</string>
+    <string name="settings_listener_status">Ұстау күйі</string>
+    <string name="settings_listener_status_connected">Қызмет қосулы — хабарламалар ұсталады</string>
+    <string name="settings_listener_status_disconnected">Қызмет қосылмаған — ұстау жұмыс істемейді</string>
+    <string name="settings_listener_status_no_access">Жүйеде рұқсат өшірулі</string>
+    <string name="settings_listener_reconnect">Ұстауды қайта қосу</string>
     <string name="history_source_sms">SMS</string>
     <string name="history_source_whatsapp">WhatsApp</string>
     <string name="history_source_telegram">Telegram</string>

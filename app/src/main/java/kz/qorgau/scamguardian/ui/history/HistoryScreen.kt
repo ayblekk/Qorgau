@@ -30,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,16 +40,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import kz.qorgau.scamguardian.R
 import kz.qorgau.scamguardian.domain.model.AnalysisRecord
 import kz.qorgau.scamguardian.domain.model.RiskLevel
 import kz.qorgau.scamguardian.domain.model.SourceApp
+import kz.qorgau.scamguardian.notification.NotificationListenerController
 import kz.qorgau.scamguardian.ui.components.PrivacyBadge
 import kz.qorgau.scamguardian.ui.components.RiskBadge
 import kz.qorgau.scamguardian.ui.util.formatTimeAgo
+import kz.qorgau.scamguardian.ui.util.isNotificationListenerEnabled
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +68,33 @@ fun HistoryScreen(
     var selected by remember { mutableStateOf<AnalysisRecord?>(null) }
     var whyExpanded by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var accessGranted by remember { mutableStateOf(isNotificationListenerEnabled(context)) }
+    var listenerConnected by remember { mutableStateOf(NotificationListenerController.isConnected) }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                accessGranted = isNotificationListenerEnabled(context)
+                listenerConnected = NotificationListenerController.isConnected
+                NotificationListenerController.ensureBound(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    // NLS bind is async after rebind — poll briefly so empty state updates.
+    LaunchedEffect(accessGranted) {
+        if (!accessGranted) return@LaunchedEffect
+        repeat(15) {
+            listenerConnected = NotificationListenerController.isConnected
+            if (listenerConnected) return@LaunchedEffect
+            delay(1_000)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -80,7 +116,11 @@ fun HistoryScreen(
         Spacer(Modifier.height(16.dp))
 
         if (items.isEmpty()) {
-            HistoryEmptyState(modifier = Modifier.fillMaxSize())
+            HistoryEmptyState(
+                accessGranted = accessGranted,
+                listenerConnected = listenerConnected,
+                modifier = Modifier.fillMaxSize(),
+            )
         } else {
             LazyColumn(
                 contentPadding = PaddingValues(bottom = 24.dp),
@@ -127,7 +167,27 @@ fun HistoryScreen(
 }
 
 @Composable
-private fun HistoryEmptyState(modifier: Modifier = Modifier) {
+private fun HistoryEmptyState(
+    accessGranted: Boolean,
+    listenerConnected: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val title: String
+    val hint: String
+    when {
+        !accessGranted -> {
+            title = stringResource(R.string.history_empty_no_access)
+            hint = stringResource(R.string.history_empty_no_access_hint)
+        }
+        !listenerConnected -> {
+            title = stringResource(R.string.history_empty_disconnected)
+            hint = stringResource(R.string.history_empty_disconnected_hint)
+        }
+        else -> {
+            title = stringResource(R.string.history_empty)
+            hint = stringResource(R.string.history_empty_hint)
+        }
+    }
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -140,14 +200,16 @@ private fun HistoryEmptyState(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.history_empty),
+            text = title,
             style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.history_empty_hint),
+            text = hint,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
         )
     }
 }

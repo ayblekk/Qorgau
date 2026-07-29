@@ -9,7 +9,16 @@
 
     <string name="history_title">История</string>
     <string name="history_empty">Пока всё чисто</string>
-    <string name="history_empty_hint">Подозрительные сообщения появятся здесь</string>
+    <string name="history_empty_hint">Проверенные сообщения (в том числе безопасные) появятся здесь</string>
+    <string name="history_empty_no_access">Нет доступа к уведомлениям</string>
+    <string name="history_empty_no_access_hint">Откройте Настройки → Доступ к уведомлениям и включите Qorgau</string>
+    <string name="history_empty_disconnected">Перехват не подключён</string>
+    <string name="history_empty_disconnected_hint">Доступ есть, но служба не связана. Откройте Настройки → Доступ к уведомлениям, выключите и снова включите Qorgau</string>
+    <string name="settings_listener_status">Статус перехвата</string>
+    <string name="settings_listener_status_connected">Служба подключена — сообщения перехватываются</string>
+    <string name="settings_listener_status_disconnected">Служба не подключена — перехват не работает</string>
+    <string name="settings_listener_status_no_access">Доступ выключен в системе</string>
+    <string name="settings_listener_reconnect">Переподключить перехват</string>
     <string name="history_source_sms">SMS</string>
     <string name="history_source_whatsapp">WhatsApp</string>
     <string name="history_source_telegram">Telegram</string>

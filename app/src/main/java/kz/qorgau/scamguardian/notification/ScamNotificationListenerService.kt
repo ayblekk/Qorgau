@@ -1,14 +1,12 @@
 package kz.qorgau.scamguardian.notification
 
-import android.content.ComponentName
-import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import kz.qorgau.scamguardian.ScamGuardianApp
 
 /**
- * Thin capture layer for SMS / WhatsApp / Telegram notifications.
+ * Thin capture layer for SMS / WhatsApp / Telegram / other messengers.
  * Rebinds itself if the system disconnects the listener (common on aggressive OEMs).
  */
 class ScamNotificationListenerService : NotificationListenerService() {
@@ -19,27 +17,24 @@ class ScamNotificationListenerService : NotificationListenerService() {
     override fun onCreate() {
         super.onCreate()
         bindIngestor()
+        Log.i(TAG, "Service onCreate")
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
         bindIngestor()
+        NotificationListenerController.markConnected()
         Log.i(TAG, "Notification listener connected")
         // Catch up on active messaging notifications already on the shade.
-        runCatching {
-            activeNotifications?.forEach { sbn ->
-                process(sbn)
-            }
-        }
+        reprocessActiveNotifications()
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
+        NotificationListenerController.markDisconnected()
         Log.w(TAG, "Notification listener disconnected — requesting rebind")
-        val component = ComponentName(this, ScamNotificationListenerService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            requestRebind(component)
-        }
+        // requestRebind from the service context after disconnect.
+        NotificationListenerController.ensureBound(this, forceBounce = false)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -56,17 +51,39 @@ class ScamNotificationListenerService : NotificationListenerService() {
         super.onDestroy()
     }
 
+    private fun reprocessActiveNotifications() {
+        runCatching {
+            val active = activeNotifications
+            Log.i(TAG, "Reprocessing activeNotifications count=${active?.size ?: 0}")
+            active?.forEach { sbn -> process(sbn) }
+        }.onFailure {
+            Log.w(TAG, "activeNotifications failed: ${it.javaClass.simpleName}")
+        }
+    }
+
     private fun bindIngestor() {
         val app = application as? ScamGuardianApp
-        ingestor = app?.container?.messageIngestor
-        app?.container?.alertNotifier?.ensureChannel()
+        if (app == null) {
+            Log.e(TAG, "Application is not ScamGuardianApp — cannot bind ingestor")
+            ingestor = null
+            return
+        }
+        ingestor = app.container.messageIngestor
+        app.container.alertNotifier.ensureChannel()
     }
 
     private fun process(sbn: StatusBarNotification) {
         val activeIngestor = ingestor ?: run {
             bindIngestor()
             ingestor
-        } ?: return
+        }
+        if (activeIngestor == null) {
+            Log.e(
+                TAG,
+                "Drop: no MessageIngestor pkg=${sbn.packageName}",
+            )
+            return
+        }
 
         when (val result = extractor.extract(sbn, packageName)) {
             is NotificationTextExtractor.ExtractResult.Ignored -> {
@@ -81,6 +98,11 @@ class ScamNotificationListenerService : NotificationListenerService() {
             }
             is NotificationTextExtractor.ExtractResult.Success -> {
                 val msg = result.message
+                NotificationListenerController.markCapture(
+                    source = msg.sourceApp.storageValue,
+                    packageName = msg.packageName,
+                    textLength = msg.text.length,
+                )
                 Log.i(
                     TAG,
                     "Captured source=${msg.sourceApp.storageValue} pkg=${msg.packageName} " +
@@ -99,11 +121,17 @@ class ScamNotificationListenerService : NotificationListenerService() {
             lower.contains("messag") ||
             lower.contains("sms") ||
             lower.contains("signal") ||
-            lower.contains("viber")
+            lower.contains("viber") ||
+            lower.contains("instagram") ||
+            lower.contains("facebook") ||
+            lower.contains("vkontakte") ||
+            lower.contains("beeline") ||
+            lower.contains("telephony")
     }
 
     companion object {
         private const val TAG = "ScamNotifListener"
-        private const val DEBUG_LOG = false
+        // Keep capture diagnostics on; never logs message body.
+        private const val DEBUG_LOG = true
     }
 }
