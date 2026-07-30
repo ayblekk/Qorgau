@@ -12,13 +12,13 @@
     <string name="history_empty_hint">Тексерілген хабарламалар (қауіпсіздерді қоса) осында пайда болады</string>
     <string name="history_empty_no_access">Хабарламаларға қолжетімділік жоқ</string>
     <string name="history_empty_no_access_hint">Баптаулар → Хабарламаларға қолжетімділік ашып, Qorgau-ды қосыңыз</string>
-    <string name="history_empty_disconnected">Ұстау қосылмаған</string>
+    <string name="history_empty_disconnected">Қорғаныс қосылмаған</string>
     <string name="history_empty_disconnected_hint">Рұқсат бар, бірақ қызмет байланыспаған. Баптаулар → Хабарламаларға қолжетімділік: Qorgau-ды өшіріп, қайта қосыңыз</string>
-    <string name="settings_listener_status">Ұстау күйі</string>
-    <string name="settings_listener_status_connected">Қызмет қосулы — хабарламалар ұсталады</string>
-    <string name="settings_listener_status_disconnected">Қызмет қосылмаған — ұстау жұмыс істемейді</string>
+    <string name="settings_listener_status">Қорғаныс күйі</string>
+    <string name="settings_listener_status_connected">Қызмет қосулы — хабарламалар тексеріледі</string>
+    <string name="settings_listener_status_disconnected">Қызмет қосылмаған — қорғаныс жұмыс істемейді</string>
     <string name="settings_listener_status_no_access">Жүйеде рұқсат өшірулі</string>
-    <string name="settings_listener_reconnect">Ұстауды қайта қосу</string>
+    <string name="settings_listener_reconnect">Қорғанысты қайта қосу</string>
     <string name="history_source_sms">SMS</string>
     <string name="history_source_whatsapp">WhatsApp</string>
     <string name="history_source_telegram">Telegram</string>
@@ -106,7 +106,7 @@
     <string name="onboarding_step_alerts_title">Қосымша хабарламалары</string>
     <string name="onboarding_step_alerts_body">Хабарлама алаяқтыққа ұқсаса ескерту көрсету үшін.</string>
     <string name="onboarding_step_listener_title">Хабарламаларға қол жеткізу</string>
-    <string name="onboarding_step_listener_body">Міндетті. Qorgau-ды хабарлама қолжетімділігі тізімінде қосыңыз — онсыз ұстау жұмыс істемейді.</string>
+    <string name="onboarding_step_listener_body">Міндетті. Qorgau-ды хабарлама қолжетімділігі тізімінде қосыңыз — онсыз хабарлама қорғанысы жұмыс істемейді.</string>
     <string name="onboarding_step_battery_title">Фондық жұмыс</string>
     <string name="onboarding_step_battery_body">Батареяны оңтайландыруды өшіріңіз, жүйе қорғанысты тоқтатпауы үшін.</string>
     <string name="onboarding_action_allow">Рұқсат беру</string>

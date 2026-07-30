@@ -12,13 +12,13 @@
     <string name="history_empty_hint">Checked messages (including safe ones) will show up here</string>
     <string name="history_empty_no_access">No notification access</string>
     <string name="history_empty_no_access_hint">Open Settings → Notification access and enable Qorgau</string>
-    <string name="history_empty_disconnected">Listener not connected</string>
+    <string name="history_empty_disconnected">Protection is not connected</string>
     <string name="history_empty_disconnected_hint">Access is on, but the service is not bound. Open Settings → Notification access, turn Qorgau off and on again</string>
-    <string name="settings_listener_status">Capture status</string>
-    <string name="settings_listener_status_connected">Service connected — messages are captured</string>
-    <string name="settings_listener_status_disconnected">Service not connected — capture is not working</string>
+    <string name="settings_listener_status">Protection status</string>
+    <string name="settings_listener_status_connected">Service connected — messages are being checked</string>
+    <string name="settings_listener_status_disconnected">Service not connected — protection is not working</string>
     <string name="settings_listener_status_no_access">Access disabled in system settings</string>
-    <string name="settings_listener_reconnect">Reconnect capture</string>
+    <string name="settings_listener_reconnect">Reconnect protection</string>
     <string name="history_source_sms">SMS</string>
     <string name="history_source_whatsapp">WhatsApp</string>
     <string name="history_source_telegram">Telegram</string>
@@ -106,7 +106,7 @@
     <string name="onboarding_step_alerts_title">App notifications</string>
     <string name="onboarding_step_alerts_body">To show alerts when a message looks like a scam.</string>
     <string name="onboarding_step_listener_title">Notification access</string>
-    <string name="onboarding_step_listener_body">Required. Enable Qorgau in the list of apps with notification access — without it, message capture does not work.</string>
+    <string name="onboarding_step_listener_body">Required. Enable Qorgau in the list of apps with notification access — without it, message protection does not work.</string>
     <string name="onboarding_step_battery_title">Background activity</string>
     <string name="onboarding_step_battery_body">Turn off battery optimization so the system does not stop protection.</string>
     <string name="onboarding_action_allow">Allow</string>
