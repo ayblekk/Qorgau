@@ -173,6 +173,69 @@ class NotificationTextExtractorTest {
     }
 
     @Test
+    fun `ignores message from phone placeholder`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.SMS,
+            packageName = "com.android.mms",
+            title = "+7 707 028 1515",
+            text = "Message from +7 707 028 1515",
+            bigText = null,
+            receivedAtEpochMs = 1L,
+        )
+        assertEquals(
+            NotificationTextExtractor.IgnoreReason.USELESS_SUMMARY,
+            (result as NotificationTextExtractor.ExtractResult.Ignored).reason,
+        )
+    }
+
+    @Test
+    fun `ignores russian message from placeholder`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.WHATSAPP,
+            packageName = "com.whatsapp",
+            title = "Али",
+            text = "Сообщение от Али",
+            bigText = null,
+            receivedAtEpochMs = 1L,
+        )
+        assertEquals(
+            NotificationTextExtractor.IgnoreReason.USELESS_SUMMARY,
+            (result as NotificationTextExtractor.ExtractResult.Ignored).reason,
+        )
+    }
+
+    @Test
+    fun `ignores phone-only body with phone title`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.SMS,
+            packageName = "com.google.android.apps.messaging",
+            title = "+77070281515",
+            text = "+77070281515",
+            bigText = null,
+            receivedAtEpochMs = 1L,
+        )
+        assertEquals(
+            NotificationTextExtractor.IgnoreReason.USELESS_SUMMARY,
+            (result as NotificationTextExtractor.ExtractResult.Ignored).reason,
+        )
+    }
+
+    @Test
+    fun `prefers real body over message from placeholder candidate`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.SMS,
+            packageName = "com.android.mms",
+            title = "+7 707 028 1515",
+            text = "Message from +7 707 028 1515",
+            bigText = "В наличии калмады",
+            receivedAtEpochMs = 1L,
+        )
+        assertTrue(result is NotificationTextExtractor.ExtractResult.Success)
+        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
+        assertTrue(msg.text.contains("калмады"))
+    }
+
+    @Test
     fun `uses ticker as fallback body`() {
         val result = NotificationTextExtractor.extractFromParts(
             sourceApp = SourceApp.SMS,

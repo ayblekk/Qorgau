@@ -11,7 +11,7 @@ class RulePackLoaderTest {
     fun `loads default pack from assets file`() {
         val json = File("src/main/assets/rules/default_rules_v1.json").readText()
         val pack = RulePackLoader().loadFromString(json)
-        assertEquals("1.3.0", pack.version)
+        assertEquals("1.3.2", pack.version)
         assertTrue(pack.rules.size >= 45)
         assertTrue(pack.rules.any { it.id == "combo_bank_and_code" })
         assertTrue(pack.rules.any { it.id == "survey_bonus_bait" })

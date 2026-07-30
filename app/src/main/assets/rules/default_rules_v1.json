@@ -1,13 +1,13 @@
 {
-  "version": "1.3.0",
+  "version": "1.3.2",
   "name": "default_kz_cis",
-  "description": "Kazakhstan / CIS text scam patterns (auditable). RU/KK/EN. v1.3: mobile operators, police/MVD, tax, courier, gov services, utilities, support spoof + many bait triggers.",
+  "description": "Kazakhstan / CIS text scam patterns (auditable). RU/KK/EN. v1.3.2: P1 brand-only soft weights; P2 soft bait caps (lottery/credit/relative/account).",
   "rules": [
     {
       "id": "bank_kaspi_impersonation",
       "category": "bank_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.42,
+      "severity_weight": 0.26,
       "match": "any",
       "patterns": [
         "kaspi",
@@ -21,15 +21,15 @@
         "kaspikredit",
         "kaspishop"
       ],
-      "description_ru": "Упоминание Kaspi в подозрительном контексте (часто имитация банка).",
-      "description_kk": "Күдікті контекстте Kaspi атауы (жиі банкке еліктеу).",
-      "description_en": "Mentions Kaspi in a suspicious context (often bank impersonation)."
+      "description_ru": "Упоминание Kaspi (слабый сигнал бренда; скам — вместе с кодом/переводом).",
+      "description_kk": "Kaspi атауы (әлсіз бренд сигналы; скам — код/аударыммен бірге).",
+      "description_en": "Mentions Kaspi (weak brand signal; scam when combined with code/transfer)."
     },
     {
       "id": "bank_halyk_impersonation",
       "category": "bank_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.40,
+      "severity_weight": 0.26,
       "match": "any",
       "patterns": [
         "halyk",
@@ -39,15 +39,15 @@
         "halyk bank",
         "homebank"
       ],
-      "description_ru": "Упоминание Halyk / Народный банк — типичная имитация.",
-      "description_kk": "Halyk / Халық банкі атауы — типтік еліктеу.",
-      "description_en": "Mentions Halyk / Narodny Bank — a common impersonation tactic."
+      "description_ru": "Упоминание Halyk / Народный банк (слабый сигнал бренда).",
+      "description_kk": "Halyk / Халық банкі атауы (әлсіз бренд сигналы).",
+      "description_en": "Mentions Halyk / Narodny Bank (weak brand signal)."
     },
     {
       "id": "bank_freedom_impersonation",
       "category": "bank_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.38,
+      "severity_weight": 0.24,
       "match": "any",
       "patterns": [
         "freedom bank",
@@ -64,7 +64,7 @@
       "id": "bank_jusan_bcc",
       "category": "bank_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.36,
+      "severity_weight": 0.24,
       "match": "any",
       "patterns": [
         "jusan",
@@ -269,21 +269,18 @@
       "id": "prize_lottery_scam",
       "category": "prize_scam",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.38,
+      "severity_weight": 0.33,
       "match": "any",
       "patterns": [
         "вы выиграли",
         "вы выйграли",
         "вы стали победителем",
         "приз в размере",
-        "получите подарок",
         "ваш выигрыш",
         "приз ждет",
         "приз ждёт",
         "розыгрыш iphone",
         "розыгрыш айфон",
-        "розыгрыш",
-        "лотерея",
         "суперприз",
         "сертификат на сумму",
         "бесплатный iphone",
@@ -292,76 +289,48 @@
         "сіз ұтып алдыңыз",
         "жеңімпаз атандыңыз",
         "сыйлық алу үшін",
-        "ұтыс",
-        "жеңіс",
         "сыйлық күтуде"
       ],
-      "description_ru": "«Вы выиграли» / лотерея / приз за оплату.",
-      "description_kk": "«Сіз ұтып алдыңыз» / лотерея / төлем арқылы сыйлық.",
-      "description_en": "“You won” / lottery / prize that requires payment."
+      "description_ru": "«Вы выиграли» / приз за оплату — без голых «розыгрыш/лотерея».",
+      "description_kk": "«Сіз ұтып алдыңыз» / төлем арқылы сыйлық — жалаң «ұтыс/лотерея» жоқ.",
+      "description_en": "“You won” / prize-for-payment bait — bare “lottery/giveaway” alone not enough."
     },
     {
       "id": "survey_bonus_bait",
       "category": "prize_scam",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.40,
-      "match": "any",
+      "severity_weight": 0.34,
+      "match": "all",
       "patterns": [
-        "короткий опрос",
-        "пройдите опрос",
-        "пройти опрос",
-        "пройдите короткий",
-        "получите бонус",
-        "получи бонус",
-        "бонус за",
-        "бонус ждет",
-        "бонус ждёт",
-        "заполните анкету",
-        "заполни анкету",
-        "пройдите анкету",
-        "вознаграждение за опрос",
-        "опрос и получите",
-        "сауалнама",
-        "сұрақнама",
-        "бонус алыңыз",
-        "сауалнама өтіңіз",
-        "take a short survey",
-        "get a bonus",
-        "complete the survey"
+        "regex:(?:короткий\\s+опрос|пройдите\\s+опрос|пройти\\s+опрос|пройдите\\s+короткий|заполните\\s+анкету|заполни\\s+анкету|пройдите\\s+анкету|вознаграждение\\s+за\\s+опрос|опрос\\s+и\\s+получите|сауалнама\\s+өтіңіз|take\\s+a\\s+short\\s+survey|complete\\s+the\\s+survey|сауалнама|сұрақнама|опрос|анкет|survey)",
+        "regex:(?:получите\\s+бонус|получи\\s+бонус|бонус\\s+ждет|бонус\\s+ждёт|бонус\\s+алыңыз|get\\s+a\\s+bonus|бонус|приз|вознагражд|подарок|сыйлық|bonus|prize)"
       ],
-      "description_ru": "Приманка «короткий опрос / бонус» — типичный вход в мошенничество.",
-      "description_kk": "«Қысқа сауалнама / бонус» тұзағы — типтік алаяқтық бастауы.",
-      "description_en": "“Short survey / get a bonus” bait — common scam entry."
+      "description_ru": "Приманка «опрос/анкета + бонус/приз» — подозрительно, но без перевода/кода это не полноценный скам.",
+      "description_kk": "«Сауалнама/анкета + бонус/сыйлық» тұзағы — күдікті, бірақ аударым/кодсыз толық алаяқтық емес.",
+      "description_en": "Survey/form plus bonus/prize bait — suspicious; not full scam without money/OTP pressure."
     },
     {
       "id": "fake_credit_alert",
       "category": "social_engineering",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.45,
+      "severity_weight": 0.40,
       "match": "any",
       "patterns": [
-        "на ваше имя",
         "на ваше имя пытаются",
         "пытаются оформить кредит",
-        "оформить кредит",
         "оформляют кредит",
-        "заявка на кредит",
         "кредит без вашего",
         "займ на ваше",
-        "оформить займ",
-        "микрозайм",
         "отмените кредит",
         "отменить заявку на кредит",
         "кто-то оформляет",
         "оформлена заявка",
-        "сіздің атыңызға",
         "несие рәсімде",
-        "микронесие",
         "кредит рәсімдеп"
       ],
-      "description_ru": "Страшилка «на ваше имя оформляют кредит/займ» — классическая схема.",
-      "description_kk": "«Сіздің атыңызға несие рәсімдеп жатыр» қорқытуы — классикалық схема.",
-      "description_en": "Scare tactic “someone is taking a loan in your name” — classic scheme."
+      "description_ru": "Страшилка «оформляют кредит без вас» (не голые «на ваше имя» / «оформить кредит»).",
+      "description_kk": "«Сізсіз несие рәсімдеп жатыр» қорқытуы (жалаң «атыңызға» / «несие» емес).",
+      "description_en": "Scare “loan being taken without you” — not bare “in your name” / “get a loan”."
     },
     {
       "id": "debt_collection_scare",
@@ -493,7 +462,7 @@
       "id": "delivery_parcel_scam",
       "category": "delivery_scam",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.34,
+      "severity_weight": 0.28,
       "match": "any",
       "patterns": [
         "посылка задержана",
@@ -561,7 +530,7 @@
       "id": "account_blocked_threat",
       "category": "urgency_finance",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.36,
+      "severity_weight": 0.34,
       "match": "any",
       "patterns": [
         "ваш аккаунт будет",
@@ -575,14 +544,12 @@
         "сессия будет завершена",
         "отмените перевод",
         "отмените операцию",
-        "если это не вы",
-        "егер бұл сіз болмасаңыз",
         "шот бұғатталды",
         "күдікті операция"
       ],
-      "description_ru": "Угроза блокировки счёта / «подозрительная операция».",
-      "description_kk": "Шотты бұғаттау қаупі / «күдікті операция».",
-      "description_en": "Threat of account lock / “suspicious transaction”."
+      "description_ru": "Угроза блокировки счёта / «подозрительная операция» (не голый «если это не вы»).",
+      "description_kk": "Шотты бұғаттау қаупі / «күдікті операция» (жалаң «егер бұл сіз емес» емес).",
+      "description_en": "Account lock / suspicious-op threat — bare “if this wasn’t you” alone not enough."
     },
     {
       "id": "investment_crypto_scam",
@@ -609,14 +576,13 @@
       "id": "relative_emergency_money",
       "category": "social_engineering",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.37,
+      "severity_weight": 0.36,
       "match": "any",
       "patterns": [
         "мама это я",
         "папа это я",
         "сломал телефон",
         "разбил телефон",
-        "новый номер",
         "переведи на карту",
         "срочно нужны деньги",
         "попал в аварию",
@@ -626,9 +592,9 @@
         "телефон сынды",
         "шұғыл ақша керек"
       ],
-      "description_ru": "Схема «родственник в беде» / новый номер.",
-      "description_kk": "«Туыс қиындықта» / жаңа нөмір схемасы.",
-      "description_en": "“Relative in trouble” / new phone number scheme."
+      "description_ru": "Схема «родственник в беде» (не голый «новый номер»).",
+      "description_kk": "«Туыс қиындықта» схемасы (жалаң «жаңа нөмір» емес).",
+      "description_en": "“Relative in trouble” scheme — bare “new number” alone not enough."
     },
     {
       "id": "secret_keep_quiet",
@@ -653,7 +619,7 @@
       "id": "mobile_operator_impersonation",
       "category": "telecom_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.38,
+      "severity_weight": 0.26,
       "match": "any",
       "patterns": [
         "beeline",
@@ -744,7 +710,7 @@
       "id": "courier_delivery_impersonation",
       "category": "delivery_scam",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.40,
+      "severity_weight": 0.26,
       "match": "any",
       "patterns": [
         "курьер",
@@ -835,7 +801,7 @@
       "id": "utility_provider_impersonation",
       "category": "utility_scam",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.34,
+      "severity_weight": 0.24,
       "match": "any",
       "patterns": [
         "казахтелеком",
@@ -898,7 +864,7 @@
       "id": "marketplace_platform_impersonation",
       "category": "marketplace_scam",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.36,
+      "severity_weight": 0.24,
       "match": "any",
       "patterns": [
         "olx",
@@ -930,7 +896,7 @@
       "id": "insurance_impersonation",
       "category": "finance_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.34,
+      "severity_weight": 0.24,
       "match": "any",
       "patterns": [
         "страховая компания",
@@ -952,7 +918,7 @@
       "id": "healthcare_minzdrav_impersonation",
       "category": "gov_impersonation",
       "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.34,
+      "severity_weight": 0.24,
       "match": "any",
       "patterns": [
         "минздрав",
@@ -1312,20 +1278,6 @@
       "description_ru": "Срочность + перевод денег.",
       "description_kk": "Шұғылдық + ақша аудару.",
       "description_en": "Urgency plus a money transfer request."
-    },
-    {
-      "id": "combo_survey_bonus",
-      "category": "combo_high_risk",
-      "languages": ["ru", "kk", "en", "both"],
-      "severity_weight": 0.55,
-      "match": "all",
-      "patterns": [
-        "regex:(?:опрос|анкет|сауалнама|сұрақнама|survey)",
-        "regex:(?:бонус|приз|вознагражд|подарок|сыйлық|bonus|prize)"
-      ],
-      "description_ru": "Опрос/анкета + бонус/приз — типичная приманка.",
-      "description_kk": "Сауалнама/анкета + бонус/сыйлық — типтік тұзақ.",
-      "description_en": "Survey/form plus bonus/prize — typical bait."
     },
     {
       "id": "combo_credit_name",

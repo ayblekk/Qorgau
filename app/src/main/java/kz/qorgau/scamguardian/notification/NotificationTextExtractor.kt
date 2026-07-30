@@ -238,6 +238,8 @@ object NotificationTextExtractor {
         if (candidate.any { it.isWhitespace() }) score += 40
         if (title != null && candidate.equals(title, ignoreCase = true)) score -= 100
         if (isGenericLabel(candidate)) score -= 80
+        // Placeholder shade lines ("Message from +7…") must lose to real body text.
+        if (isSenderPlaceholderBody(candidate)) score -= 120
         return score
     }
 
@@ -257,15 +259,52 @@ object NotificationTextExtractor {
             "новое сообщение",
             "жаңа хабарлама",
             "messages from",
+            "message from",
             "сообщений от",
+            "сообщение от",
+            "хабарламадан",
             "checking for new messages",
             "backup in progress",
         )
         if (summaryPatterns.any { it in lower }) return true
+        if (isSenderPlaceholderBody(text)) return true
         if (isGroupSummary && text.length < 24 && !text.any { it.isLetter() && it.code > 127 || it.isWhitespace() }) {
             return true
         }
         return isGenericLabel(text)
+    }
+
+    /**
+     * OEM / messenger placeholders with no analyzable content, e.g.
+     * "Message from +7 707 028 1515" or "Сообщение от Alice".
+     */
+    internal fun isSenderPlaceholderBody(text: String): Boolean {
+        val trimmed = stripInvisible(text).trim()
+        if (trimmed.isEmpty()) return false
+        val lower = trimmed.lowercase()
+
+        // Whole body is a meta line: "Message from <name/phone>".
+        val placeholderPrefixes = listOf(
+            "message from ",
+            "messages from ",
+            "сообщение от ",
+            "сообщения от ",
+            "сообщений от ",
+        )
+        for (prefix in placeholderPrefixes) {
+            if (lower.startsWith(prefix)) {
+                val rest = trimmed.substring(prefix.length).trim()
+                // Only a contact/phone left — nothing to run rules on.
+                if (rest.isNotEmpty() && rest.length <= 64 && !rest.contains('\n')) {
+                    return true
+                }
+            }
+        }
+
+        // Body is only a phone number (sometimes duplicated as "text" with title=phone).
+        if (PHONE_ONLY.matches(trimmed)) return true
+
+        return false
     }
 
     private fun isGenericLabel(text: String): Boolean {
@@ -291,6 +330,10 @@ object NotificationTextExtractor {
             "сообщение удалено",
         )
     }
+
+    private val PHONE_ONLY = Regex(
+        """^\+?[\d\s\-().]{7,22}$""",
+    )
 
     private fun isMessageLikeCategory(category: String?): Boolean =
         category == Notification.CATEGORY_MESSAGE ||
