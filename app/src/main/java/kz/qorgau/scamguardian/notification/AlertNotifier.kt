@@ -17,6 +17,9 @@ import kz.qorgau.scamguardian.ui.util.LocaleHelper
 
 /**
  * Shows a high-priority local alert. Content never leaves the device.
+ *
+ * Privacy: lock-screen / public shade must NOT show message body (RULES.md §1, §9).
+ * Full text lives only inside the app History screen.
  * Tone is intentionally urgent so the user stops before acting on a scam.
  * Strings follow the user's selected app language (RU / KK / EN).
  */
@@ -43,7 +46,8 @@ class AlertNotifier(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 setAllowBubbles(false)
             }
-            lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+            // Hide sensitive content on secure lock screen.
+            lockscreenVisibility = android.app.Notification.VISIBILITY_PRIVATE
         }
         manager.createNotificationChannel(channel)
     }
@@ -54,7 +58,8 @@ class AlertNotifier(
 
         val openApp = PendingIntent.getActivity(
             appContext,
-            record.id.toInt(),
+            // Stable request code without truncating large ids into collisions.
+            (record.id % Int.MAX_VALUE).toInt().let { if (it == 0) 1 else it },
             Intent(appContext, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 putExtra(EXTRA_ANALYSIS_ID, record.id)
@@ -74,24 +79,27 @@ class AlertNotifier(
             RiskLevel.SAFE -> return
         }
 
-        val preview = record.messageText
-            .replace('\n', ' ')
-            .trim()
-            .take(140)
-
+        // Explanation only — never embed raw message text in the system shade.
         val bigBody = when (record.riskLevel) {
             RiskLevel.HIGH -> res.getString(
-                R.string.alert_body_high,
+                R.string.alert_body_high_private,
                 record.explanation,
-                preview,
             )
             RiskLevel.SUSPICIOUS -> res.getString(
-                R.string.alert_body_suspicious,
+                R.string.alert_body_suspicious_private,
                 record.explanation,
-                preview,
             )
             RiskLevel.SAFE -> return
         }
+
+        val publicLockscreen = NotificationCompat.Builder(appContext, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification_logo)
+            .setContentTitle(title)
+            .setContentText(shortBody)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .build()
 
         val notification = NotificationCompat.Builder(appContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_logo)
@@ -104,7 +112,8 @@ class AlertNotifier(
             )
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setPublicVersion(publicLockscreen)
             .setColor(Color.parseColor("#D32F2F"))
             .setColorized(false)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
@@ -117,12 +126,13 @@ class AlertNotifier(
         // May require POST_NOTIFICATIONS on API 33+ — request is handled in onboarding.
         runCatching {
             NotificationManagerCompat.from(appContext)
-                .notify(NOTIFICATION_TAG, record.id.toInt(), notification)
+                .notify(NOTIFICATION_TAG, (record.id % Int.MAX_VALUE).toInt(), notification)
         }
     }
 
     companion object {
-        const val CHANNEL_ID: String = "scam_alerts_v2"
+        /** Bumped channel id so PRIVATE lock-screen visibility applies on upgrade. */
+        const val CHANNEL_ID: String = "scam_alerts_v3"
         const val NOTIFICATION_TAG: String = "scamguardian_alert"
         const val EXTRA_ANALYSIS_ID: String = "extra_analysis_id"
     }

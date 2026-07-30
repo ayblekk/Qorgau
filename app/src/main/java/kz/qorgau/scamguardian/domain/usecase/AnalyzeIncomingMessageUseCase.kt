@@ -1,5 +1,7 @@
 package kz.qorgau.scamguardian.domain.usecase
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kz.qorgau.scamguardian.domain.model.AnalysisRecord
 import kz.qorgau.scamguardian.domain.model.AppSettings
 import kz.qorgau.scamguardian.domain.model.IncomingMessage
@@ -20,9 +22,14 @@ class AnalyzeIncomingMessageUseCase(
     private val settingsRepository: SettingsRepository,
 ) {
 
+    /** Serializes check-then-insert so concurrent NLS callbacks cannot double-store. */
+    private val storeMutex = Mutex()
+
     data class Outcome(
         val record: AnalysisRecord,
         val shouldAlert: Boolean,
+        /** True when this was a re-post of content already stored (no new History row). */
+        val wasDuplicate: Boolean = false,
     )
 
     /**
@@ -47,7 +54,24 @@ class AnalyzeIncomingMessageUseCase(
     private suspend fun analyzeAndStore(
         message: IncomingMessage,
         settings: AppSettings,
-    ): Outcome {
+    ): Outcome = storeMutex.withLock {
+        // Survive process death + NLS reprocessActiveNotifications: same shade
+        // notification reuses postTime, so ABS(created_at − receivedAt) ≈ 0.
+        val existing = analysisRepository.findRecentDuplicate(
+            sourceApp = message.sourceApp,
+            sender = message.sender,
+            messageText = message.text.trim(),
+            receivedAtEpochMs = message.receivedAtEpochMs,
+            proximityMs = DB_DEDUP_PROXIMITY_MS,
+        )
+        if (existing != null) {
+            return@withLock Outcome(
+                record = existing,
+                shouldAlert = false,
+                wasDuplicate = true,
+            )
+        }
+
         // Include sender so chat-title brand spoofing (e.g. "Kaspi" on WhatsApp) is scored.
         val evaluationText = buildEvaluationText(message.sender, message.text)
         val rawEvaluation = ruleEngine.evaluate(
@@ -81,13 +105,20 @@ class AnalyzeIncomingMessageUseCase(
         val shouldAlert = evaluation.riskLevel == RiskLevel.HIGH ||
             (evaluation.riskLevel == RiskLevel.SUSPICIOUS && settings.sensitivity != Sensitivity.LOW)
 
-        return Outcome(
+        Outcome(
             record = stored,
             shouldAlert = shouldAlert,
+            wasDuplicate = false,
         )
     }
 
     companion object {
+        /**
+         * Same idea as NotificationCaptureConfig.DB_DEDUP_PROXIMITY_MS — kept here so
+         * domain does not depend on the notification package.
+         */
+        internal const val DB_DEDUP_PROXIMITY_MS: Long = 5 * 60_000L
+
         internal fun buildEvaluationText(sender: String?, body: String): String {
             val s = sender?.trim().orEmpty()
             return if (s.isEmpty()) body else "$s\n$body"

@@ -93,6 +93,8 @@
     <string name="alert_title_suspicious">⚠️ Назар! Күдікті хабарлама</string>
     <string name="alert_body_high">⛔ Ақша аудармаңыз және кодты айтпаңыз!\n\n%1$s\n\n📩 «%2$s»</string>
     <string name="alert_body_suspicious">⚡ Сақ болыңыз — алдауға ұқсайды.\n\n%1$s\n\n📩 «%2$s»</string>
+    <string name="alert_body_high_private">⛔ Ақша аудармаңыз және кодты айтпаңыз!\n\n%1$s\n\nХабарламаны оқу үшін қосымшаны ашыңыз.</string>
+    <string name="alert_body_suspicious_private">⚡ Сақ болыңыз — алдауға ұқсайды.\n\n%1$s\n\nХабарламаны оқу үшін қосымшаны ашыңыз.</string>
     <string name="alert_short_high">⛔ Ақша аудармаңыз! SMS кодын ешкімге айтпаңыз!</string>
     <string name="alert_short_suspicious">⚡ Сілтемеге өтпеңіз және жауап бермеңіз — алдымен тексеріңіз.</string>
 

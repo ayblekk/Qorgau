@@ -93,6 +93,8 @@
     <string name="alert_title_suspicious">⚠️ Caution! Suspicious message</string>
     <string name="alert_body_high">⛔ Do not send money or share codes!\n\n%1$s\n\n📩 “%2$s”</string>
     <string name="alert_body_suspicious">⚡ Be careful — this may be a scam.\n\n%1$s\n\n📩 “%2$s”</string>
+    <string name="alert_body_high_private">⛔ Do not send money or share codes!\n\n%1$s\n\nOpen the app to read the message.</string>
+    <string name="alert_body_suspicious_private">⚡ Be careful — this may be a scam.\n\n%1$s\n\nOpen the app to read the message.</string>
     <string name="alert_short_high">⛔ Do not send money! Never share SMS codes!</string>
     <string name="alert_short_suspicious">⚡ Do not open links or reply until you verify.</string>
 

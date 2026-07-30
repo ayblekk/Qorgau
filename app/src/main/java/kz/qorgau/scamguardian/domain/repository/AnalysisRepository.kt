@@ -3,6 +3,7 @@ package kz.qorgau.scamguardian.domain.repository
 import kotlinx.coroutines.flow.Flow
 import kz.qorgau.scamguardian.domain.model.AnalysisRecord
 import kz.qorgau.scamguardian.domain.model.RiskLevel
+import kz.qorgau.scamguardian.domain.model.SourceApp
 import kz.qorgau.scamguardian.domain.model.UserFeedback
 
 /**
@@ -16,6 +17,18 @@ interface AnalysisRepository {
     suspend fun getById(id: Long): AnalysisRecord?
 
     suspend fun insert(record: AnalysisRecord): Long
+
+    /**
+     * Returns an existing history row for the same source/sender/body near [receivedAtEpochMs],
+     * or null if this looks like a new message.
+     */
+    suspend fun findRecentDuplicate(
+        sourceApp: SourceApp,
+        sender: String?,
+        messageText: String,
+        receivedAtEpochMs: Long,
+        proximityMs: Long,
+    ): AnalysisRecord?
 
     suspend fun markRead(id: Long)
 

@@ -110,7 +110,7 @@ class NotificationTextExtractorTest {
     }
 
     @Test
-    fun `group conversations are still analyzed`() {
+    fun `group conversations are ignored per architecture`() {
         val result = NotificationTextExtractor.extractFromParts(
             sourceApp = SourceApp.TELEGRAM,
             packageName = "org.telegram.messenger",
@@ -120,9 +120,10 @@ class NotificationTextExtractorTest {
             isGroupConversation = true,
             receivedAtEpochMs = 1L,
         )
-        assertTrue(result is NotificationTextExtractor.ExtractResult.Success)
-        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
-        assertTrue(msg.isGroupConversation)
+        assertEquals(
+            NotificationTextExtractor.IgnoreReason.GROUP_CONVERSATION,
+            (result as NotificationTextExtractor.ExtractResult.Ignored).reason,
+        )
     }
 
     @Test
@@ -248,5 +249,26 @@ class NotificationTextExtractorTest {
         )
         val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
         assertTrue(msg.text.contains("подтвердите") || msg.text.contains("перевод"))
+    }
+
+    @Test
+    fun `strips message count from whatsapp conversation title`() {
+        val result = NotificationTextExtractor.extractFromParts(
+            sourceApp = SourceApp.WHATSAPP,
+            packageName = "com.whatsapp",
+            title = "F4™ (2 messages)",
+            text = "Рахмат",
+            bigText = null,
+            receivedAtEpochMs = 1L,
+        )
+        val msg = (result as NotificationTextExtractor.ExtractResult.Success).message
+        assertEquals("F4™", msg.sender)
+        assertEquals("Рахмат", msg.text)
+    }
+
+    @Test
+    fun `normalizeSenderTitle leaves plain names alone`() {
+        assertEquals("Марлен", NotificationTextExtractor.normalizeSenderTitle("Марлен"))
+        assertEquals(null, NotificationTextExtractor.normalizeSenderTitle("  "))
     }
 }

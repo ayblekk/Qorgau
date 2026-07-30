@@ -36,4 +36,27 @@ interface AnalysisLogDao {
 
     @Query("DELETE FROM analysis_log")
     suspend fun clearAll()
+
+    /**
+     * Exact content match near [receivedAtEpochMs] — used to drop NLS reprocess /
+     * OEM re-posts of the same shade notification (same postTime → ABS ≈ 0).
+     */
+    @Query(
+        """
+        SELECT * FROM analysis_log
+        WHERE source_app = :sourceApp
+          AND message_text = :messageText
+          AND IFNULL(sender, '') = IFNULL(:sender, '')
+          AND ABS(created_at - :receivedAtEpochMs) <= :proximityMs
+        ORDER BY created_at DESC
+        LIMIT 1
+        """,
+    )
+    suspend fun findRecentDuplicate(
+        sourceApp: String,
+        sender: String?,
+        messageText: String,
+        receivedAtEpochMs: Long,
+        proximityMs: Long,
+    ): AnalysisLogEntity?
 }

@@ -3,6 +3,7 @@ package kz.qorgau.scamguardian.notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import kz.qorgau.scamguardian.BuildConfig
 import kz.qorgau.scamguardian.ScamGuardianApp
 
 /**
@@ -87,13 +88,15 @@ class ScamNotificationListenerService : NotificationListenerService() {
 
         when (val result = extractor.extract(sbn, packageName)) {
             is NotificationTextExtractor.ExtractResult.Ignored -> {
-                // Always log drop reasons for messaging-ish packages to diagnose OEM gaps.
-                val pkg = sbn.packageName.orEmpty()
-                if (DEBUG_LOG || isInterestingPackage(pkg)) {
-                    Log.i(
-                        TAG,
-                        "Ignored: ${result.reason} pkg=$pkg cat=${sbn.notification?.category}",
-                    )
+                // Debug only — never log message body (RULES.md §9).
+                if (BuildConfig.DEBUG) {
+                    val pkg = sbn.packageName.orEmpty()
+                    if (isInterestingPackage(pkg)) {
+                        Log.i(
+                            TAG,
+                            "Ignored: ${result.reason} pkg=$pkg cat=${sbn.notification?.category}",
+                        )
+                    }
                 }
             }
             is NotificationTextExtractor.ExtractResult.Success -> {
@@ -103,11 +106,13 @@ class ScamNotificationListenerService : NotificationListenerService() {
                     packageName = msg.packageName,
                     textLength = msg.text.length,
                 )
-                Log.i(
-                    TAG,
-                    "Captured source=${msg.sourceApp.storageValue} pkg=${msg.packageName} " +
-                        "len=${msg.text.length}",
-                )
+                if (BuildConfig.DEBUG) {
+                    Log.i(
+                        TAG,
+                        "Captured source=${msg.sourceApp.storageValue} pkg=${msg.packageName} " +
+                            "len=${msg.text.length}",
+                    )
+                }
                 activeIngestor.ingestFromNotification(msg)
             }
         }
@@ -131,7 +136,5 @@ class ScamNotificationListenerService : NotificationListenerService() {
 
     companion object {
         private const val TAG = "ScamNotifListener"
-        // Keep capture diagnostics on; never logs message body.
-        private const val DEBUG_LOG = true
     }
 }

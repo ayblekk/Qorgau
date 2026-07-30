@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import kz.qorgau.scamguardian.BuildConfig
 import kz.qorgau.scamguardian.data.local.db.dao.AnalysisLogDao
 import kz.qorgau.scamguardian.data.local.db.dao.AppSettingsDao
 import kz.qorgau.scamguardian.data.local.db.entity.AnalysisLogEntity
@@ -89,16 +90,19 @@ abstract class ScamGuardianDatabase : RoomDatabase() {
         }
 
         private fun build(context: Context): ScamGuardianDatabase {
-            return Room.databaseBuilder(
+            val builder = Room.databaseBuilder(
                 context,
                 ScamGuardianDatabase::class.java,
                 DATABASE_NAME,
             )
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                // Stage 1: prefer open over crash if a device has a broken/partial schema.
-                .fallbackToDestructiveMigration()
                 .addCallback(SeedCallback)
-                .build()
+            // Never wipe user message history in release (privacy + data loss).
+            // Debug may still recover from partial schemas during development.
+            if (BuildConfig.DEBUG) {
+                builder.fallbackToDestructiveMigration()
+            }
+            return builder.build()
         }
     }
 

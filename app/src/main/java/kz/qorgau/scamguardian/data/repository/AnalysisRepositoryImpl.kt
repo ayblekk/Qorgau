@@ -6,6 +6,7 @@ import kz.qorgau.scamguardian.data.local.db.dao.AnalysisLogDao
 import kz.qorgau.scamguardian.data.local.db.mapper.AnalysisLogMapper
 import kz.qorgau.scamguardian.domain.model.AnalysisRecord
 import kz.qorgau.scamguardian.domain.model.RiskLevel
+import kz.qorgau.scamguardian.domain.model.SourceApp
 import kz.qorgau.scamguardian.domain.model.UserFeedback
 import kz.qorgau.scamguardian.domain.repository.AnalysisRepository
 
@@ -26,6 +27,21 @@ class AnalysisRepositoryImpl(
 
     override suspend fun insert(record: AnalysisRecord): Long =
         analysisLogDao.insert(AnalysisLogMapper.toEntity(record))
+
+    override suspend fun findRecentDuplicate(
+        sourceApp: SourceApp,
+        sender: String?,
+        messageText: String,
+        receivedAtEpochMs: Long,
+        proximityMs: Long,
+    ): AnalysisRecord? =
+        analysisLogDao.findRecentDuplicate(
+            sourceApp = sourceApp.storageValue,
+            sender = sender,
+            messageText = messageText,
+            receivedAtEpochMs = receivedAtEpochMs,
+            proximityMs = proximityMs,
+        )?.let(AnalysisLogMapper::toDomain)
 
     override suspend fun markRead(id: Long) {
         analysisLogDao.markRead(id)

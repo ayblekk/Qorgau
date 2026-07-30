@@ -20,6 +20,49 @@ class OfficialSenderPolicyTest {
         assertTrue(OfficialSenderPolicy.isOfficialKaspiSender("Kaspi Gold"))
         assertFalse(OfficialSenderPolicy.isOfficialKaspiSender("Keruen"))
         assertFalse(OfficialSenderPolicy.isOfficialKaspiSender(null))
+        // Bare spoofable tags must NOT be trusted.
+        assertFalse(OfficialSenderPolicy.isOfficialKaspiSender("kaspi"))
+        assertFalse(OfficialSenderPolicy.isOfficialKaspiSender("Каспи"))
+        assertFalse(OfficialSenderPolicy.isOfficialKaspiSender("Kaspi Support"))
+    }
+
+    @Test
+    fun `does not dampen hard otp rule even from official tag`() {
+        val raw = RuleEvaluationResult(
+            riskLevel = RiskLevel.HIGH,
+            matchedRuleIds = listOf("otp_code_request", "bank_kaspi_impersonation"),
+            explanation = "scam",
+            confidence = 0.9f,
+            isUncertain = false,
+        )
+        val out = OfficialSenderPolicy.maybeDampen(
+            result = raw,
+            sourceApp = SourceApp.SMS,
+            sender = "kaspi.kz",
+            bodyText = "Операция. Код 123456",
+            language = AppLanguage.RUSSIAN,
+        )
+        assertEquals(RiskLevel.HIGH, out.riskLevel)
+        assertEquals(listOf("otp_code_request", "bank_kaspi_impersonation"), out.matchedRuleIds)
+    }
+
+    @Test
+    fun `does not dampen bare kaspi sender spoof`() {
+        val raw = RuleEvaluationResult(
+            riskLevel = RiskLevel.HIGH,
+            matchedRuleIds = listOf("bank_kaspi_impersonation"),
+            explanation = "scam",
+            confidence = 0.9f,
+            isUncertain = false,
+        )
+        val out = OfficialSenderPolicy.maybeDampen(
+            result = raw,
+            sourceApp = SourceApp.SMS,
+            sender = "Kaspi",
+            bodyText = "Kod: 482915. Nikomu ne soobshchayte.",
+            language = AppLanguage.ENGLISH,
+        )
+        assertEquals(RiskLevel.HIGH, out.riskLevel)
     }
 
     @Test

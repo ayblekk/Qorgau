@@ -31,6 +31,8 @@ object NotificationTextExtractor {
         TOO_LONG,
         ONGOING_OR_FOREGROUND_SERVICE,
         USELESS_SUMMARY,
+        /** Group chats are skipped (ARCHITECTURE.md §3.1 — battery / noise). */
+        GROUP_CONVERSATION,
     }
 
     fun extract(
@@ -137,6 +139,10 @@ object NotificationTextExtractor {
         if (isUselessSummary(cleaned, isGroupSummary)) {
             return ExtractResult.Ignored(IgnoreReason.USELESS_SUMMARY)
         }
+        // ARCHITECTURE.md §3.1: skip group chats (noise + battery).
+        if (isGroupConversation) {
+            return ExtractResult.Ignored(IgnoreReason.GROUP_CONVERSATION)
+        }
         if (cleaned.length < NotificationCaptureConfig.MIN_MESSAGE_LENGTH) {
             return ExtractResult.Ignored(IgnoreReason.TOO_SHORT)
         }
@@ -144,7 +150,7 @@ object NotificationTextExtractor {
             return ExtractResult.Ignored(IgnoreReason.TOO_LONG)
         }
 
-        val sender = title?.trim()?.takeIf { it.isNotEmpty() }
+        val sender = normalizeSenderTitle(title)
 
         return ExtractResult.Success(
             IncomingMessage(
@@ -158,6 +164,21 @@ object NotificationTextExtractor {
             ),
         )
     }
+
+    /**
+     * WhatsApp / Telegram often append " (2 messages)" to the conversation title when
+     * several unread lines are stacked. Store the clean chat name in History.
+     */
+    fun normalizeSenderTitle(title: String?): String? {
+        if (title.isNullOrBlank()) return null
+        val trimmed = title.trim()
+        val withoutCount = SENDER_MESSAGE_COUNT_SUFFIX.replace(trimmed, "").trim()
+        return withoutCount.takeIf { it.isNotEmpty() }
+    }
+
+    private val SENDER_MESSAGE_COUNT_SUFFIX = Regex(
+        """\s*\(\d+\s+[^)]{1,40}\)\s*$""",
+    )
 
     fun pickBestBody(
         bigText: String?,

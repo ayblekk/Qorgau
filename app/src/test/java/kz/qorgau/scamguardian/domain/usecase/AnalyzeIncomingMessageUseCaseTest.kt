@@ -193,6 +193,33 @@ class AnalyzeIncomingMessageUseCaseTest {
         assertTrue(outcome.shouldAlert)
     }
 
+    @Test
+    fun `does not insert duplicate of same content near same receivedAt`() = runBlocking {
+        val repo = FakeAnalysisRepository()
+        val useCase = useCase(
+            settings = AppSettings(),
+            risk = RiskLevel.SAFE,
+            repo = repo,
+        )
+        val message = IncomingMessage(
+            sourceApp = SourceApp.WHATSAPP,
+            packageName = "com.whatsapp",
+            sender = "F4™",
+            text = "құтты болсын",
+            receivedAtEpochMs = 1_700_000_000_000L,
+        )
+        val first = useCase.execute(message)
+        val second = useCase.execute(message)
+
+        assertNotNull(first)
+        assertFalse(first!!.wasDuplicate)
+        assertNotNull(second)
+        assertTrue(second!!.wasDuplicate)
+        assertFalse(second.shouldAlert)
+        assertEquals(1, repo.stored.size)
+        assertEquals(first.record.id, second.record.id)
+    }
+
     private fun sampleMessage() = IncomingMessage(
         sourceApp = SourceApp.MANUAL,
         packageName = "manual",
@@ -269,6 +296,20 @@ class AnalyzeIncomingMessageUseCaseTest {
             stored += record.copy(id = id)
             return id
         }
+
+        override suspend fun findRecentDuplicate(
+            sourceApp: SourceApp,
+            sender: String?,
+            messageText: String,
+            receivedAtEpochMs: Long,
+            proximityMs: Long,
+        ): AnalysisRecord? =
+            stored.firstOrNull { record ->
+                record.sourceApp == sourceApp &&
+                    record.messageText == messageText &&
+                    (record.sender ?: "") == (sender ?: "") &&
+                    kotlin.math.abs(record.createdAtEpochMs - receivedAtEpochMs) <= proximityMs
+            }
 
         override suspend fun markRead(id: Long) = Unit
         override suspend fun setFeedback(id: Long, feedback: UserFeedback) = Unit

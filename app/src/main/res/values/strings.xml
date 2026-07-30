@@ -93,6 +93,9 @@
     <string name="alert_title_suspicious">⚠️ Внимание! Подозрительно</string>
     <string name="alert_body_high">⛔ Не переводите деньги и не сообщайте коды!\n\n%1$s\n\n📩 «%2$s»</string>
     <string name="alert_body_suspicious">⚡ Будьте осторожны — похоже на обман.\n\n%1$s\n\n📩 «%2$s»</string>
+    <!-- Shade/lockscreen: explanation only — no message body (privacy). -->
+    <string name="alert_body_high_private">⛔ Не переводите деньги и не сообщайте коды!\n\n%1$s\n\nОткройте приложение, чтобы прочитать сообщение.</string>
+    <string name="alert_body_suspicious_private">⚡ Будьте осторожны — похоже на обман.\n\n%1$s\n\nОткройте приложение, чтобы прочитать сообщение.</string>
     <string name="alert_short_high">⛔ Не переводите деньги! Не сообщайте коды из SMS!</string>
     <string name="alert_short_suspicious">⚡ Не переходите по ссылкам и не отвечайте, пока не проверите.</string>
 
