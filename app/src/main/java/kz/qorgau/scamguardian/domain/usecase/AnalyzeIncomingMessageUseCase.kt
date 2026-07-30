@@ -7,6 +7,7 @@ import kz.qorgau.scamguardian.domain.model.RiskLevel
 import kz.qorgau.scamguardian.domain.model.Sensitivity
 import kz.qorgau.scamguardian.domain.repository.AnalysisRepository
 import kz.qorgau.scamguardian.domain.repository.SettingsRepository
+import kz.qorgau.scamguardian.domain.rules.OfficialSenderPolicy
 import kz.qorgau.scamguardian.domain.rules.RuleEngine
 
 /**
@@ -47,10 +48,19 @@ class AnalyzeIncomingMessageUseCase(
         message: IncomingMessage,
         settings: AppSettings,
     ): Outcome {
-        val evaluation = ruleEngine.evaluate(
-            text = message.text,
+        // Include sender so chat-title brand spoofing (e.g. "Kaspi" on WhatsApp) is scored.
+        val evaluationText = buildEvaluationText(message.sender, message.text)
+        val rawEvaluation = ruleEngine.evaluate(
+            text = evaluationText,
             language = settings.language,
             sensitivity = settings.sensitivity,
+        )
+        val evaluation = OfficialSenderPolicy.maybeDampen(
+            result = rawEvaluation,
+            sourceApp = message.sourceApp,
+            sender = message.sender,
+            bodyText = message.text,
+            language = settings.language,
         )
 
         val record = AnalysisRecord(
@@ -75,5 +85,12 @@ class AnalyzeIncomingMessageUseCase(
             record = stored,
             shouldAlert = shouldAlert,
         )
+    }
+
+    companion object {
+        internal fun buildEvaluationText(sender: String?, body: String): String {
+            val s = sender?.trim().orEmpty()
+            return if (s.isEmpty()) body else "$s\n$body"
+        }
     }
 }

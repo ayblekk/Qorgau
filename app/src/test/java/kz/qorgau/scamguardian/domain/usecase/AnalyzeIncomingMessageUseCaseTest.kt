@@ -54,7 +54,7 @@ class AnalyzeIncomingMessageUseCaseTest {
             IncomingMessage(
                 sourceApp = SourceApp.SMS,
                 packageName = "com.android.mms",
-                sender = "Kaspi",
+                sender = "Unknown",
                 text = "code please",
                 receivedAtEpochMs = 42L,
             ),
@@ -119,6 +119,80 @@ class AnalyzeIncomingMessageUseCaseTest {
         assertTrue(outcome.shouldAlert)
     }
 
+    @Test
+    fun `buildEvaluationText prepends sender`() {
+        assertEquals(
+            "Keruen\nПройдите короткий опрос",
+            AnalyzeIncomingMessageUseCase.buildEvaluationText(
+                "Keruen",
+                "Пройдите короткий опрос",
+            ),
+        )
+        assertEquals(
+            "only body",
+            AnalyzeIncomingMessageUseCase.buildEvaluationText(null, "only body"),
+        )
+    }
+
+    @Test
+    fun `official kaspi sms without override is dampened to safe`() = runBlocking {
+        val repo = FakeAnalysisRepository()
+        val useCase = AnalyzeIncomingMessageUseCase(
+            ruleEngine = FixedResultEngine(
+                RuleEvaluationResult(
+                    riskLevel = RiskLevel.HIGH,
+                    matchedRuleIds = listOf("bank_kaspi_impersonation"),
+                    explanation = "bank",
+                    confidence = 0.9f,
+                    isUncertain = false,
+                ),
+            ),
+            analysisRepository = repo,
+            settingsRepository = FakeSettingsRepository(AppSettings()),
+        )
+        val outcome = useCase.execute(
+            IncomingMessage(
+                sourceApp = SourceApp.SMS,
+                packageName = "com.android.mms",
+                sender = "kaspi.kz",
+                text = "Kod: 111222",
+                receivedAtEpochMs = 1L,
+            ),
+        )
+        assertNotNull(outcome)
+        assertEquals(RiskLevel.SAFE, outcome!!.record.riskLevel)
+        assertFalse(outcome.shouldAlert)
+    }
+
+    @Test
+    fun `official kaspi sms with code request is not dampened`() = runBlocking {
+        val useCase = AnalyzeIncomingMessageUseCase(
+            ruleEngine = FixedResultEngine(
+                RuleEvaluationResult(
+                    riskLevel = RiskLevel.HIGH,
+                    matchedRuleIds = listOf("otp_code_request"),
+                    explanation = "otp",
+                    confidence = 0.9f,
+                    isUncertain = false,
+                ),
+            ),
+            analysisRepository = FakeAnalysisRepository(),
+            settingsRepository = FakeSettingsRepository(AppSettings()),
+        )
+        val outcome = useCase.execute(
+            IncomingMessage(
+                sourceApp = SourceApp.SMS,
+                packageName = "com.android.mms",
+                sender = "KaspiBank",
+                text = "Пришлите код из СМС",
+                receivedAtEpochMs = 1L,
+            ),
+        )
+        assertNotNull(outcome)
+        assertEquals(RiskLevel.HIGH, outcome!!.record.riskLevel)
+        assertTrue(outcome.shouldAlert)
+    }
+
     private fun sampleMessage() = IncomingMessage(
         sourceApp = SourceApp.MANUAL,
         packageName = "manual",
@@ -154,6 +228,16 @@ class AnalyzeIncomingMessageUseCaseTest {
                 confidence = 0.6f,
                 isUncertain = uncertain,
             )
+    }
+
+    private class FixedResultEngine(
+        private val result: RuleEvaluationResult,
+    ) : RuleEngine {
+        override fun evaluate(
+            text: String,
+            language: AppLanguage,
+            sensitivity: Sensitivity,
+        ): RuleEvaluationResult = result
     }
 
     private class FakeSettingsRepository(

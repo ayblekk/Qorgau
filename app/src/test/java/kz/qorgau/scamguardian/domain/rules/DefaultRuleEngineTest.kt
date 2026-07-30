@@ -145,6 +145,124 @@ class DefaultRuleEngineTest {
         )
     }
 
+    @Test
+    fun `screenshot survey bonus bait is not safe on medium`() {
+        val result = engine.evaluate(
+            text = "Пройдите короткий опрос и получите бонус",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertTrue(
+            "expected not SAFE, got ${result.riskLevel} ids=${result.matchedRuleIds}",
+            result.riskLevel != RiskLevel.SAFE,
+        )
+        assertTrue(result.matchedRuleIds.isNotEmpty())
+        assertFalse(result.explanation.contains("No clear scam", ignoreCase = true))
+        assertFalse(result.explanation.contains("Явных признаков", ignoreCase = true))
+    }
+
+    @Test
+    fun `screenshot fake credit alert is high or suspicious on medium`() {
+        val result = engine.evaluate(
+            text = "На ваше имя пытаются оформить кредит",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertTrue(
+            "expected HIGH or SUSPICIOUS, got ${result.riskLevel} ids=${result.matchedRuleIds}",
+            result.riskLevel == RiskLevel.HIGH || result.riskLevel == RiskLevel.SUSPICIOUS,
+        )
+        assertTrue(
+            result.matchedRuleIds.any {
+                it.contains("credit") || it.contains("combo_credit")
+            },
+        )
+    }
+
+    @Test
+    fun `high sensitivity flags weak click bait alone`() {
+        val text = "Подробнее по ссылке и обновите данные"
+        val low = engine.evaluate(text, AppLanguage.RUSSIAN, Sensitivity.LOW)
+        val high = engine.evaluate(text, AppLanguage.RUSSIAN, Sensitivity.HIGH)
+        assertEquals(RiskLevel.SAFE, low.riskLevel)
+        assertTrue(
+            "HIGH should flag weak bait, got ${high.riskLevel} ids=${high.matchedRuleIds}",
+            high.riskLevel != RiskLevel.SAFE,
+        )
+    }
+
+    @Test
+    fun `sender brand spoof in evaluation text is matched`() {
+        val result = engine.evaluate(
+            text = "Kaspi\nСрочно пришлите код из СМС",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertEquals(RiskLevel.HIGH, result.riskLevel)
+    }
+
+    @Test
+    fun `mobile operator code request is high risk`() {
+        val result = engine.evaluate(
+            text = "Beeline: ваш номер будет заблокирован. Пришлите код из СМС.",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertEquals(RiskLevel.HIGH, result.riskLevel)
+        assertTrue(
+            result.matchedRuleIds.any {
+                it.contains("operator") || it.contains("otp") || it.contains("mobile")
+            },
+        )
+    }
+
+    @Test
+    fun `tax service payment demand is flagged`() {
+        val result = engine.evaluate(
+            text = "Налоговая служба КГД: задолженность по налогам. Оплатите штраф по ссылке.",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertTrue(
+            "expected HIGH or SUSPICIOUS, got ${result.riskLevel} ids=${result.matchedRuleIds}",
+            result.riskLevel == RiskLevel.HIGH || result.riskLevel == RiskLevel.SUSPICIOUS,
+        )
+        assertTrue(result.matchedRuleIds.any { it.contains("tax") || it.contains("combo_tax") })
+    }
+
+    @Test
+    fun `courier asks for payment is flagged`() {
+        val result = engine.evaluate(
+            text = "Я ваш курьер Wolt у подъезда. Переведите оплату за доставку на карту.",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertTrue(
+            "expected HIGH or SUSPICIOUS, got ${result.riskLevel} ids=${result.matchedRuleIds}",
+            result.riskLevel == RiskLevel.HIGH || result.riskLevel == RiskLevel.SUSPICIOUS,
+        )
+        assertTrue(
+            result.matchedRuleIds.any {
+                it.contains("courier") || it.contains("combo_courier")
+            },
+        )
+    }
+
+    @Test
+    fun `police money pressure is high risk`() {
+        val result = engine.evaluate(
+            text = "Сотрудник МВД. Уголовное дело. Никому не говорите, переведите на карту для проверки.",
+            language = AppLanguage.RUSSIAN,
+            sensitivity = Sensitivity.MEDIUM,
+        )
+        assertEquals(RiskLevel.HIGH, result.riskLevel)
+        assertTrue(
+            result.matchedRuleIds.any {
+                it.contains("police") || it.contains("combo_police") || it.contains("secret")
+            },
+        )
+    }
+
     private fun readDefaultRulesJson(): String {
         val candidates = listOf(
             File("src/main/assets/rules/default_rules_v1.json"),

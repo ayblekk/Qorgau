@@ -154,10 +154,12 @@ class DefaultRuleEngine(
         companion object {
             fun forSensitivity(sensitivity: Sensitivity): Thresholds =
                 when (sensitivity) {
+                    // Slightly lower than MEDIUM so single weak bait phrases (0.26–0.31)
+                    // can tip to SUSPICIOUS at maximum sensitivity.
                     Sensitivity.HIGH -> Thresholds(
-                        high = 0.45f,
-                        suspicious = 0.25f,
-                        uncertainFloor = 0.18f,
+                        high = 0.40f,
+                        suspicious = 0.20f,
+                        uncertainFloor = 0.15f,
                     )
                     Sensitivity.MEDIUM -> Thresholds(
                         high = 0.55f,
